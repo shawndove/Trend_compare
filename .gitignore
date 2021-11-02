@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+bird_data/
+figure_images/
+figures/
+files/
+plots/
+tables/
+UCR_datasets/
