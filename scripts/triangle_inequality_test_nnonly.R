@@ -7,6 +7,8 @@ ti.test.nn.fn1 <- function(dist.fun,
                         tmax=5) 
 {
   
+  source("generate_time_series_nn.R")
+  
   # store sequence of years for plotting purposes
   #years <- seq(1,100)
   

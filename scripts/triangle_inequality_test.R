@@ -3,17 +3,19 @@ ti.test.fn1 <- function(dist.fun,
                        dist.args,
                        x,
                        y,
-                       tpops=10000,
+                       tpops=100000,
                        tmax=5) 
 {
+  
+source("generate_time_series.R")
   
 # store sequence of years for plotting purposes
 #years <- seq(1,100)
 
 # create 3 lists of random time series using pgrowth4 function
-ts_list.1 <- as.matrix(pgrowth4(tpops, tmax, gr_mean=0.01, gr_sd_vec=0.1, popspec=1)[,1:tmax])
-ts_list.2 <- as.matrix(pgrowth4(tpops, tmax, gr_mean=0.005, gr_sd_vec=0.1, popspec=1)[,1:tmax])
-ts_list.3 <- as.matrix(pgrowth4(tpops, tmax, gr_mean=0.015, gr_sd_vec=0.1, popspec=1)[,1:tmax])
+ts_list.1 <- as.matrix(pgrowth(tpops, tmax, gr_start=1, gr_mean=0, gr_sd=1))
+ts_list.2 <- as.matrix(pgrowth(tpops, tmax, gr_start=1, gr_mean=0, gr_sd=0.3))
+ts_list.3 <- as.matrix(pgrowth(tpops, tmax, gr_start=1, gr_mean=2, gr_sd=0.5))
 
 #ts_list.1 <- vector(length=1000)
 #ts_list.1 <- as.matrix(do.call(rbind, lapply(ts_list.1, function(x) sample(1:1000, 100))))
@@ -91,50 +93,67 @@ for (h in 1:nrow(ts_list.1)) {
     
   }
   
-  ti_full_results[[h]] <- ti_temp_results
-  
-  nn_temp_results[rcounter] <- ifelse(any(ti_temp_results < 0), FALSE, TRUE)
-  
-  rcounter <- rcounter + 3
-  
-  # save the largest result as the longest side of a triangle
-  ti_longside <- max(ti_temp_results)
-  
-  # save the other two results as the shorter sides of the triangle
-  ti_othersides <- ti_temp_results[-grep(max(ti_temp_results), ti_temp_results)]
-  
-  # check whether the max result is unique (if so, there should be 2 othersides)
-  # if it is not unique, the two longest sides are of equal length
-  # the dm passes the triangle inequality test by default
-  # because the two longest sides are equal, so one side cannot be longer than
-  # the other two combined
-  if(length(ti_othersides)<2) {
+  if(any(is.nan(ti_temp_results))) {
     
-    # return true
-    ti_results[h] <- TRUE
+    ti_results[h] <- NA
+    
+    nn_temp_results[rcounter] <- NA
+    
+    rcounter <- rcounter + 3
     
   } else {
-    # if it is unique, subtract the two shorter sides from the longside
-    temp_result <- ti_longside - sum(ti_othersides)
+  
+    ti_full_results[[h]] <- ti_temp_results
+  
+    nn_temp_results[rcounter] <- ifelse(any(ti_temp_results < 0), FALSE, TRUE)
+  
+    rcounter <- rcounter + 3
+  
+    # save the largest result as the longest side of a triangle
+    ti_longside <- max(ti_temp_results)
+  
+    # save the other two results as the shorter sides of the triangle
+    ti_othersides <- ti_temp_results[-grep(max(ti_temp_results), ti_temp_results)]
+  
+    # check whether the max result is unique (if so, there should be 2 othersides)
+    # if it is not unique, the two longest sides are of equal length
+    # the dm passes the triangle inequality test by default
+    # because the two longest sides are equal, so one side cannot be longer than
+    # the other two combined
+    if(length(ti_othersides)<2) {
     
-    # if the difference is greater than 0, the dm fails the test, return FALSE
-    # if it is less than or equal to 0, return TRUE
-    # note that 0.0001 has been used instead of 0, as apparent rounding errors 
-    # were leading to occasional false negatives
-    ti_results[h] <- ifelse(temp_result > 0.0001, FALSE, TRUE)
+      # return true
+      ti_results[h] <- TRUE
     
+    } else {
+      
+      # if it is unique, subtract the two shorter sides from the longside
+      temp_result <- ti_longside - sum(ti_othersides)
+    
+      # if the difference is greater than 0, the dm fails the test, return FALSE
+      # if it is less than or equal to 0, return TRUE
+      # note that 0.0001 has been used instead of 0, as apparent rounding errors 
+      # were leading to occasional false negatives
+      ti_results[h] <- ifelse(temp_result > 0.0001, FALSE, TRUE)
+    
+    }
+  
   }
   
 }
 
 # check whether the dm passed all triangle inequality tests
 # if so return TRUE, if not return FALSE
-final_ti_result <- all(ti_results)
+final_ti_result <- all(ti_results[!is.na(ti_results)])
 
-final_nn_result <- all(nn_temp_results)
+final_nn_result <- all(nn_temp_results[!is.na(nn_temp_results)])
+#final_nn_result <- ifelse(!all(nn_temp_results)==TRUE, FALSE, TRUE)
 
 ti_full_results[[tpops+1]] <- ti_results
 ti_full_results[[tpops+2]] <- final_ti_result
+ti_full_results[[tpops+3]] <- ts_list.1
+ti_full_results[[tpops+4]] <- ts_list.2
+ti_full_results[[tpops+5]] <- ts_list.3
 
 nn_full_results <- list(nn_temp_results, final_nn_result)
 
@@ -142,8 +161,8 @@ nn_full_results <- list(nn_temp_results, final_nn_result)
 wd <- getwd()
 
 # save full results as RData file
-saveRDS(ti_full_results, file = paste(wd, "/files/ti_results/", print_name, "_tifull.RData", sep=""))
-saveRDS(nn_full_results, file = paste(wd, "/files/nn_results/", print_name, "_nnfull.RData", sep=""))
+saveRDS(ti_full_results, file = paste(wd, "/files/ti_results_temp/", print_name, "_tifull.RData", sep=""))
+saveRDS(nn_full_results, file = paste(wd, "/files/nn_results_temp/", print_name, "_nnfull.RData", sep=""))
 
 final_results <- list(final_ti_result, final_nn_result)
 

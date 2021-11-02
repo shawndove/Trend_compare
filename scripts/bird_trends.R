@@ -6,7 +6,6 @@ library(patchwork)
 library(mgcv)
 library(data.table)
 
-setwd("C:/R_projects/Trend_compare")
 trends_temp <- read.csv("time_indices_birds_sj_proper.csv")
 trends_temp$smooth <- NA
 trends_temp_l <- trends_temp
@@ -137,10 +136,10 @@ p_all <- p1 + p2 + p3
 
 p1_3 <- p1 + p3
 
-#ggsave(paste("c:/R_projects/Trend_compare/plots/bird_trends_fixed.jpg", sep=""), 
+#ggsave(paste("plots/bird_trends_fixed.jpg", sep=""), 
 #       p_all, width=7480, height=9055, units="px", dpi=1000, scale=1, compression="lzw")
 
-ggsave(paste("c:/R_projects/Trend_compare/figures/bird_trends_present.tiff", sep=""), 
+ggsave(paste("figures/bird_trends_present.tiff", sep=""), 
        p1_3, width=7480, height=9055, units="px", dpi=1000, scale=1, compression="lzw")
 
 trends.smoothed_subset <- subset(trends_temp_l, select=c(1,2,9,10,12))
