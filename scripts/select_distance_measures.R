@@ -1,3 +1,6 @@
+library(TSdist)
+library(philentropy)
+
 # Define distance measures ----
 
 # list of functions of all distance measures to be tested

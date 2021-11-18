@@ -1,6 +1,6 @@
 test.results.fn <- function(tslistx, tslisty, x, y, dist.fun, dist.args) {
   
-  source("ts_testing_controlled.R")
+  source("scripts/ts_testing_controlled.R")
   
   test.results <- vector()
   

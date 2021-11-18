@@ -22,7 +22,7 @@ get.dm.result1 <- function(dist.fun,
   
   ### load functions ----
   
-  source("test_results_fn.R")
+  source("scripts/test_results_fn.R")
   
   ### prepare variables ----
   

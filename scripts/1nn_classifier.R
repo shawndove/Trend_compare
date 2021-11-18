@@ -1,4 +1,4 @@
-chinatown_train <- read.csv(file="c:/R_projects/Trend_compare/UCR_datasets/Chinatown_TRAIN.tsv", sep="")
+chinatown_train <- read.csv(file="UCR_datasets/Chinatown_TRAIN.tsv", sep="")
 c_train_noclass <- chinatown_train[,2:length(chinatown_train)]
 c_train_noclass2 <- t(apply(c_train_noclass, 1, normalize))
 #c_train_noclass2.5 <- matrix(NA, nrow=nrow(c_train_noclass2), ncol=ncol(c_train_noclass2))
@@ -9,7 +9,7 @@ c_train_noclass3 <- c_train_noclass2 + 0.0001
 plot(seq(1:length(c_train_noclass)),c_train_noclass3[18,], type="l")
 c_train_classes <- chinatown_train[,1]
 
-chinatown_test <- read.csv(file="c:/R_projects/Trend_compare/UCR_datasets/Chinatown_TEST.tsv", sep="")
+chinatown_test <- read.csv(file="UCR_datasets/Chinatown_TEST.tsv", sep="")
 c_test_noclass <- chinatown_test[,2:length(chinatown_test)]
 c_test_noclass2 <- t(apply(c_test_noclass, 1, normalize))
 #c_test_noclass2.5 <- matrix(NA, nrow=nrow(c_test_noclass2), ncol=ncol(c_test_noclass2))
@@ -20,17 +20,17 @@ c_test_noclass3 <- c_test_noclass2 + 0.0001
 plot(seq(1:length(c_test_noclass)),c_test_noclass3[105,], type="l")
 c_test_classes <- chinatown_test[,1]
 
-yoga_train <- read.csv(file="c:/R_projects/Trend_compare/UCR_datasets/Yoga/Yoga_TRAIN.tsv", sep="")
+yoga_train <- read.csv(file="UCR_datasets/Yoga/Yoga_TRAIN.tsv", sep="")
 y_train_noclass <- yoga_train[,2:length(yoga_train)]
 plot(seq(1:length(y_train_noclass)), y_train_noclass[5,], type="l")
 y_train_classes <- yoga_train[,1]
 
-yoga_test <- read.csv(file="c:/R_projects/Trend_compare/UCR_datasets/Yoga/Yoga_TEST.tsv", sep="")
+yoga_test <- read.csv(file="UCR_datasets/Yoga/Yoga_TEST.tsv", sep="")
 y_test_noclass <- yoga_test[,2:length(yoga_test)]
 plot(seq(1:length(y_test_noclass)), y_test_noclass[8,], type="l")
 y_test_classes <- yoga_test[,1]
 
-synth_control_train <- read.csv(file="c:/R_projects/Trend_compare/UCR_datasets/SyntheticControl/SyntheticControl_TRAIN.tsv", sep="")
+synth_control_train <- read.csv(file="UCR_datasets/SyntheticControl/SyntheticControl_TRAIN.tsv", sep="")
 #synth_control_train <- synth_control_train[synth_control_train[,1]!=2,]
 sc_train_noclass <- synth_control_train[,2:length(synth_control_train)]
 #sc_train_noclass <- data.Normalization(sc_train_noclass, type="n4", normalization="row") + 0.0001
@@ -40,7 +40,7 @@ sc_train_noclass <- synth_control_train[,2:length(synth_control_train)]
 plot(seq(1:length(sc_train_noclass)), sc_train_noclass[263,], type="l")
 sc_train_classes <- synth_control_train[,1]
 
-synth_control_test <- read.csv(file="c:/R_projects/Trend_compare/UCR_datasets/SyntheticControl/SyntheticControl_TEST.tsv", sep="")
+synth_control_test <- read.csv(file="UCR_datasets/SyntheticControl/SyntheticControl_TEST.tsv", sep="")
 #synth_control_test <- synth_control_test[synth_control_test[,1]!=2,]
 synth_control_test <- sample_n(synth_control_test, 299, replace=FALSE)
 sc_test_noclass <- synth_control_test[,2:length(synth_control_test)]

@@ -28,7 +28,7 @@ test.dur.b2 <- c(1, 1, 3, 3, 3, 1, 1, 1, 1, 1)
 test.freq.a2 <- c(1, 3, 1, 1, 1, 1, 1, 1, 1, 1)
 test.freq.b2 <- c(1, 3, 1, 1, 3, 1, 1, 1, 1, 1)
 
-tiff(file="C:/R_projects/Trend_compare/figures/properties2.tif", compression="lzw", res=1000,
+tiff(file="figures/properties2.tif", compression="lzw", res=1000,
     width = 7480, height = 9055, units = "px", pointsize = 12, bg = "white")
 par(mfrow=c(5,2), mar=c(1,0.5,1,1) + 0.1, oma=c(2,1.5,0,0), ljoin=2, tck = -0.05)
 

@@ -14,17 +14,17 @@ library(ggpubr)
 
 # Distance measures ----
 
-source("select_distance_measures.R")
+source("scripts/select_distance_measures.R")
 
 # Load functions ----
 
-source("triangle_inequality_test.R")
-source("triangle_inequality_test_nnonly.R")
-source("get.dm.result.R")
-source("get.dm.result.birds.R")
-source("get.dm.result.birds2.R")
-source("get.dm.plot.birds.R")
-source("get.dm.plot.birds2.R")
+source("scripts/triangle_inequality_test.R")
+source("scripts/triangle_inequality_test_nnonly.R")
+source("scripts/get.dm.result.R")
+source("scripts/get.dm.result.birds.R")
+source("scripts/get.dm.result.birds2.R")
+source("scripts/get.dm.plot.birds.R")
+source("scripts/get.dm.plot.birds2.R")
 
 # Produce test results ----
 
@@ -230,7 +230,7 @@ body_add_flextable(temp_doc,
                    tableslist[[3]])
 body_add_break(temp_doc)
 print(temp_doc,
-      target="Results_tables_1.docx")
+      target="tables/Results_tables_1.docx")
 
 
 

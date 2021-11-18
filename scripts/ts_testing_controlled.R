@@ -70,11 +70,11 @@ tslisty.scale <- list(test.scale.a,
 #test.phase.d <- c(1, 1, 1, 1, 1, 2, 2, 1, 1, 1)
 #test.phase.e <- c(1, 1, 1, 1, 1, 1, 2, 2, 1, 1)
 
-test.phase.a <- c(1, 4, 2, 1, 3, 1, 1, 1, 1, 1)
-test.phase.b <- c(1, 1, 4, 2, 1, 3, 1, 1, 1, 1)
-test.phase.c <- c(1, 1, 1, 4, 2, 1, 3, 1, 1, 1)
-test.phase.d <- c(1, 1, 1, 1, 4, 2, 1, 3, 1, 1)
-test.phase.e <- c(1, 1, 1, 1, 1, 4, 2, 1, 3, 1)
+test.phase.a <- c(1, 4, 2, 1, 3, 1, 1, 4, 1, 5)
+test.phase.b <- c(5, 1, 4, 2, 1, 3, 1, 1, 4, 1)
+test.phase.c <- c(1, 5, 1, 4, 2, 1, 3, 1, 1, 4)
+test.phase.d <- c(4, 1, 5, 1, 4, 2, 1, 3, 1, 1)
+test.phase.e <- c(1, 4, 1, 5, 1, 4, 2, 1, 3, 1)
 
 tslistx.phase <- list(test.phase.b,
                       test.phase.c,

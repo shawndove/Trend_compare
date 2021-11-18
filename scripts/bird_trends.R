@@ -6,7 +6,7 @@ library(patchwork)
 library(mgcv)
 library(data.table)
 
-trends_temp <- read.csv("time_indices_birds_sj_proper.csv")
+trends_temp <- read.csv("bird_data/time_indices_birds_sj_proper.csv")
 trends_temp$smooth <- NA
 trends_temp_l <- trends_temp
 

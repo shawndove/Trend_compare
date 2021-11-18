@@ -3,8 +3,7 @@
   library(ggplot2)
 
   dist.names <- c(dist.nameslist1, dist.nameslist2)
-  setwd("C:/R_projects/Trend_compare/")
-  
+
   interpreted.results <- list()
 
   for (i in seq_along(dist.names)) {
@@ -484,17 +483,17 @@ emoji_pic<-data.frame(
   Value = c("Neutral", "Positive", "Negative", 
             "All", "None", "Zeros",
             "Sens", "Inv", "Ins", "Unp", "n/a"),
-  emoji_link = c("c:/R_projects/Trend_compare/figures/u29B6-c.png",
-                 "c:/R_projects/Trend_compare/figures/u2295-c2.png",
-                 "c:/R_projects/Trend_compare/figures/u2296-c2.png",
-                 "c:/R_projects/Trend_compare/figures/black-circle_26ab.png",
-                 "c:/R_projects/Trend_compare/figures/black-circle_26ab.png",
-                 "c:/R_projects/Trend_compare/figures/black-circle_26ab.png",
-                 "c:/R_projects/Trend_compare/figures/black-circle_26ab.png",
-                 "c:/R_projects/Trend_compare/figures/black-circle_26ab.png",
-                 "c:/R_projects/Trend_compare/figures/black-circle_26ab.png",
-                 "c:/R_projects/Trend_compare/figures/black-circle_26ab.png",
-                 "c:/R_projects/Trend_compare/figures/black-circle_26ab.png"))
+  emoji_link = c("figure_images/u29B6-c.png",
+                 "figure_images/u2295-c2.png",
+                 "figure_images/u2296-c2.png",
+                 "figure_images/black-circle_26ab.png",
+                 "figure_images/black-circle_26ab.png",
+                 "figure_images/black-circle_26ab.png",
+                 "figure_images/black-circle_26ab.png",
+                 "figure_images/black-circle_26ab.png",
+                 "figure_images/black-circle_26ab.png",
+                 "figure_images/black-circle_26ab.png",
+                 "figure_images/black-circle_26ab.png"))
 
 func_link_to_img <- function(x, size = 16) {
   paste0("<img src='", x, "' width='", size, "'/>")
@@ -511,9 +510,9 @@ library(png)
 library(ggtext)
 library(grid)
 # Get image
-img_pos <- readPNG("c:/R_projects/Trend_compare/figures/u2295-c2.png")
-img_neg <- readPNG("c:/R_projects/Trend_compare/figures/u2296-c2.png")
-img_neut <- readPNG("c:/R_projects/Trend_compare/figures/u29B6-c.png")
+img_pos <- readPNG("figure_images/u2295-c2.png")
+img_neg <- readPNG("figure_images/u2296-c2.png")
+img_neut <- readPNG("figure_images/u29B6-c.png")
 
 # make the plot
 poall <- ggplot(other_long, aes(x = Test, 
@@ -577,7 +576,7 @@ poall.grob$heights[33] = unit(2, "null")
 
 poall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- c("dark blue", "grey30", "grey30", "grey30")
 
-tiff(filename="C:/R_projects/Trend_compare/figures/other.tiff", width=7480, height=10255,
+tiff(filename="figures/other.tiff", width=7480, height=10255,
      units="px", res=1000, pointsize = 10, compression = "lzw")
 
 grid::grid.newpage()

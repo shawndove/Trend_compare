@@ -1,273 +1,14 @@
-# translation sensitivity
-ts_translate <- function(t, q) {
+library(TSdist)
 
-  u <- t + q
-  
-  return(u)
-  
-}
-
-# scale sensitivity
-ts_scale <- function(t, q) {
-  
-  u <- t * q
-  
-  return(u)
-  
-}
-
-# white noise sensitivity
-ts_whitenoise <- function(t, q) {
-  
-  norm_dist <- rnorm(length(t), mean = q, sd = 0.3*q)
-  
-  rand <- sample(seq_along(t), floor(length(t)/2), replace=FALSE)
-  
-  rand_2 <- seq_along(t)[-rand]
-  
-  u <- t
-  
-  for (i in rand) {
-    
-    u[i] <- t[i] + sample(norm_dist, 1)
-    
-  }
-  
-  for (i in rand_2) {
-    
-    u[i] <- t[i] - sample(norm_dist, 1)
-    
-  }
-  
-  #u[rand] <- t[rand] + q
-  
-  #u[-rand] <- t[-rand] - q
-  
-  
-  return(u)
-  
-}
-
-# biased noise sensitivity
-ts_biasednoise <- function(t, q) {
-  
-  norm_dist <- rnorm(length(t), mean = q, sd = 0.3*q)
-  
-  rand <- sample(seq_along(t), floor(length(t)/2), replace=FALSE)
-  
-  u <- t
-  
-  for (i in rand) {
-    
-    u[i] <- t[i] + sample(norm_dist, 1)
-    
-  }
-  
-  #u[rand] <- t[rand] + q
-
-  return(u)
-  
-}
-
-# outlier sensitivity
-ts_outlier <- function(t, q) {
-  
-  rand <- sample(seq_along(t[2:(length(t)-1)]), 1)
-  
-  u <- t
-  
-  u[rand] <- t[rand] + q
-  
-  return(u)
-  
-}
-
-# antiparallelism bias
-ts_apb <- function(t, q) {
-  
-  if (q >= 1) {
-    
-    stop("q is a portion of time series t, and must be less than 1")
-    
-  }
-  
-  num_to_flip <- floor(q * length(t))
-  
-  if (num_to_flip > (length(t)-1)) {
-    
-    stop("q is too large")
-    
-  }
-  
-  full_seq <- seq_along(t)
-  
-  can_flip <- full_seq[2:(length(t)-(num_to_flip-1))]
-  
-  ifelse(length(can_flip) > 1, start <- sample(can_flip, 1), start <- can_flip)
-  
-  which_to_flip <- full_seq[start:(start+(num_to_flip-1))]
-  
-  u <- t
-  
-  v <- t
-  
-  counter <- 0
-  
-  for (i in which_to_flip) {
-    
-    temp <- t[i] - t[i-1]
-    
-    u[i] <- u[i-1] - temp
-    
-    v[i] <- t[i] + (t[i]-u[i])
-    
-    if (u[i] == t[i]) {
-      
-      counter <- counter + 1
-    }
-    
-  }
-  
-  if (counter == length(which_to_flip)) {
-    
-    warning("The transformed time series is identical to the original. 
-         This occurs when the transformation is applied to a flat section of the
-         time series (no change in values). Try making q larger.")
-    
-  }
-  
-  return(list(u,v))  
-
-    
-}
-
-# phase invariance
-ts_phase <- function(t, q) {
-  
-  if (round(q)!=q) {
-    
-    stop("Input for q must be a whole number.")
-  }
-
-  u <- c(t[(q+1):length(t)], t[1:q])
-  
-  return(u)
-  
-}
-
-# warping invariance
-ts_local_extend <- function(t, q) {
-  
-  if (round(q)!=q) {
-    
-    stop("Input for q must be a whole number.")
-  }
-  
-  rand <- sample(seq(1, length(t)), 1)
-  
-  u <- c(t[1:rand], rep(t[rand], (q-1)), t[rand:length(t)])
-  
-  return(u)
-  
-}
-
-# deletion invariance??
-ts_local_delete <- function(t, q) {
-  
-  if (round(q)!=q) {
-    
-    stop("q must be a whole number")
-  }
-  
-  if (q > (length(t)-1)) {
-    
-    stop("q must be smaller than the length of the time series")
-    
-  }
-  
-  rand <- sample(seq(1, ((length(t)+1)-q)), 1)
-  
-  if (rand==1) {
-    
-    u <- t[(q+1):length(t)]
-    
-  } else if ((rand+q) > length(t)) {
-    
-    u <- t[1:(rand-1)]
-    
-  } else {
-    
-    u <- c(t[1:(rand-1)], t[(rand+q):length(t)])
-    
-  }
-
-  return(u)
-  
-}
-
-# uniform time scale invariance
-ts_stretch <- function(t, q) { # this is a stretch function, so q should be greater than 1
-  
-  u <- t
-  
-  t_x <- seq(0, (length(t)-1))
-  
-  u_x <- t_x * q
-  
-  temp_t <- data.frame(x=t_x, y=t)
-  
-  temp1 <- data.frame(x=u_x, y=u)
-  
-  temp2 <- data.frame(x=seq(1, floor(max(u_x))), y=NA)
-  
-  temp3 <- anti_join(temp2, temp1, by="x")
-  
-  temp4 <- full_join(temp1, temp3, by="x")
-  
-  temp5 <- temp4[order(temp4$x),1:2]
-  
-  colnames(temp5) <- c("x", "y")
-  
-  first_val <- min(temp5$x[!is.na(temp5$y)])
-  
-  final_val <- max(temp5$x[!is.na(temp5$y)])
-  
-  all_na <- temp5$x[is.na(temp5$y)]
-  
-  all_vals <- temp5$x[!is.na(temp5$y)]
-  
-  for (i in all_na[all_na > first_val]) {
-    
-    num_total <- min(all_vals[all_vals > i]) - max(all_vals[all_vals < i])
-    
-    num_high <- min(all_vals[all_vals > i]) - i
-    
-    num_low <- i - max(all_vals[all_vals < i])
-    
-    diff_total <- abs((temp5$y[temp5$x==max(all_vals[all_vals < i])] - temp5$y[temp5$x==min(all_vals[all_vals > i])]))
-    
-    actual_diff <- (num_low / num_total) * diff_total
-    
-    if (temp5$y[temp5$x==max(all_vals[all_vals < i])] < temp5$y[temp5$x==min(all_vals[all_vals > i])]) {
-      
-      temp5$y[temp5$x==i] <- temp5$y[temp5$x==max(all_vals[all_vals < i])] + actual_diff
-      
-    } else {
-      
-      temp5$y[temp5$x==i] <- temp5$y[temp5$x==max(all_vals[all_vals < i])] - actual_diff
-      
-    }
-    
-  }
-
-  return(as.numeric(temp5$y[temp5$x==round(temp5$x)]))
-  
-}
+source("scripts/ts_testing_uncontrolled_fns.R")
+source("scripts/select_distance_measures.R")
 
 # apply all functions at once to a chosen distance measure
 test_fn <- function(t, q_min, q_max, increment, dm, ...) {
   
   library(dplyr)
+  
+  set.seed(23)
   
   param <- seq(q_min, q_max, increment)
   
@@ -277,26 +18,20 @@ test_fn <- function(t, q_min, q_max, increment, dm, ...) {
   
   for (i in param) {
     
-    try(results$translate[counter] <- dm(t, ts_translate(t, (i/length(t))), ...))
-    
-   # try(results$scale[counter] <- dm(t, ts_scale(t, (1 + (i/(0.5*length(t))))), ...))
-    
-    try(results$phase[counter] <- dm(t, ts_phase(t, i), ...))
-    
-   # try(results$delete[counter] <- dm(t, ts_local_delete(t, i), ...))
-    
-    try(results$extend[counter] <- dm(t, ts_local_extend(t, i), ...))
-    
-    try(results$stretch[counter] <- dm(t, ts_stretch(t, (1 + (i/q_max))), ...))
-    
-    try(results$whitenoise[counter] <- dm(t, ts_whitenoise(t, (i/length(t))), ...))
-    
-    try(results$biasednoise[counter] <- dm(t, ts_biasednoise(t, (i/(0.5*length(t)))), ...))
-    
-    try(results$outlier[counter] <- dm(t, ts_outlier(t, i), ...))
-    
-    #results$apb[counter] <- dm(t, ts_apb(t, i/(length(t))), ...)
-    
+    try(results$translate[counter] <- dm(ts_translate(t, (i/q_max)), t,...))
+
+    try(results$phase[counter] <- dm(ts_phase(t, i), t,...))
+
+    try(results$extend[counter] <- dm(ts_local_extend(t, i), t,...))
+
+    try(results$stretch[counter] <- dm(ts_stretch(t, (1 + (i/q_max))), t,...)/length(t))
+
+    try(results$whitenoise[counter] <- dm(t, ts_whitenoise(t, (i/(q_max))),...))
+
+    try(results$biasednoise[counter] <- dm(ts_biasednoise(t, (i/(0.5*q_max))), t,...))
+
+    try(results$outlier[counter] <- dm(ts_outlier(t, i), t,...))
+
     counter <- counter + 1
     
   }
@@ -318,7 +53,7 @@ test_fn2 <- function(t, trans, q_min, q_max, increment, dm, ...) {
     
     for (i in param) {
       
-      results[counter] <- dm(t, ts_translate(t, (i/length(t))), ...)
+      results[counter] <- dm(t, ts_translate(t, (i/q_max)), ...)
       
       counter <- counter + 1
       
@@ -421,11 +156,11 @@ dist.argslist1.1 <- list(NULL, #Euclidean
                        NULL, #CID
                        NULL, #DTW
                        NULL, #TAM
-                       # NULL, #NCD
-                       # NULL, #CDM
+                       NULL, #NCD
+                       NULL, #CDM
                        c(g=0), #ERP
                        # c(epsilon=0.1), #LCSS
-                       c(epsilon=0.3), #EDR
+                       c(epsilon=0), #EDR
                        NULL, #Fourier
                        NULL, #ACF
                        NULL, #PACF
@@ -436,11 +171,11 @@ dist.argslist1.1 <- list(NULL, #Euclidean
                        # c(w=5), #SAX
                        NULL, #STS
                        # NULL, #CCor
-                       NULL, #Cort
+                       NULL) #Cort
                        #NULL, #GLK
                        #NULL, #LLR
                        #NULL, #Hellinger
-                       c(alpha=50)) #MyDist
+                       #c(alpha=50)) #MyDist
 
 dist.argslist2.1 <- list(c(testNA=FALSE), #Additive
                        c(testNA=FALSE), #AVG
@@ -482,59 +217,6 @@ dist.argslist2.1 <- list(c(testNA=FALSE), #Additive
                        c(testNA=FALSE)) #WaveHedges
 
 
-trans_invivo <- list()
-
-for (i in seq_along(dist.fnlist1)) {
-  
-  if (!is.null(dist.argslist1.1[[i]])) {
-    
-    trans_invivo[[i]] <- test_fn2(t=as.numeric(sc_test_noclass[23,]),
-                                  trans="translate",
-                                  q_min=1,
-                                  q_max=100,
-                                  increment=1,
-                                  dm=dist.fnlist1[[i]],
-                                  dist.argslist1.1[[i]])
-    
-  } else {
-    
-    trans_invivo[[i]] <- test_fn2(t=as.numeric(sc_test_noclass[23,]),
-                                  trans="translate",
-                                  q_min=1,
-                                  q_max=100,
-                                  increment=1,
-                                  dm=dist.fnlist1[[i]])
-    
-  }
-  
-}
-
-trans_invivo2 <- as.data.frame(do.call(cbind, trans_invivo))
-colnames(trans_invivo2) <- dist.nameslist1
-#time <- seq(1, length(trans_invivo2[,1]))
-#trans_invivo2 <- cbind(trans_invivo2, time)
-trans_invivo_long <- reshape(trans_invivo2, 
-                   varying=as.vector(dist.nameslist1),
-                   v.names="distance",
-                   idvar="size",
-                   timevar="DM",
-                   times=as.vector(dist.nameslist1),
-                   new.row.names = 1:(ncol(trans_invivo2)*nrow(trans_invivo2)),
-                   direction = "long")
-
-ggplot(trans_invivo_long, aes(x = size, y = log(distance+1), group=DM))+
-  geom_point(aes(color=DM)) +
-  geom_jitter(aes(color=DM), width=1)
-  #stat_smooth(aes(color=DM), method="loess", span = 0.8)
-
-
-# Create user-defined function, which extracts legends from ggplots
-extract_legend <- function(my_ggp) {
-  step1 <- ggplot_gtable(ggplot_build(my_ggp))
-  step2 <- which(sapply(step1$grobs, function(x) x$name) == "guide-box")
-  step3 <- step1$grobs[[step2]]
-  return(step3)
-}
 
 
 library(ggplot2)
@@ -543,57 +225,80 @@ library(gridExtra)
 library(grid)
 library(dplyr)
 library(plyr)
+library(scales)
 
 
 # colour blind friendly palette for plotting
+#cbPalette <- c("#000000", #black
+#               "#E69F00", #orange
+#               "#56B4E9", #sky blue
+#               "#009E73", #bluish green
+#               "#0072B2", #blue
+#               "#D55E00", #vermillion
+#               "#CC79A7") #reddish purple
+
 cbPalette <- c("#000000", #black
-               #"#999999", #grey
                "#E69F00", #orange
-               "#56B4E9", #sky blue
-               "#009E73", #bluish green
-               #"#F0E442", #yellow
                "#0072B2", #blue
                "#D55E00", #vermillion
                "#CC79A7") #reddish purple
 
 # names for plot legend labels
-plot.names <- c("Translation", 
-                #"Scaling", 
-                "Phase", 
-                "Warping", 
-                "Uniform Time Scaling", 
-                "White Noise", 
-                "Biased Noise", 
+#plot.names <- c("Translation", 
+#                "Phase", 
+#                "Warping", 
+#                "Uniform Time Scaling", 
+#                "White Noise", 
+#                "Biased Noise", 
+#                "Outliers")
+
+plot.names <- c("Translation",
+                "Phase",
+                "White Noise",
+                "Biased Noise",
                 "Outliers")
-                #"Antiparallelism")
 
 # create list for plots
 p <- list()
 
-for (i in seq_along(dist.fnlist1)) {
+for (i in seq_along(dist.fnlist2)) {
   
-  if (!is.null(dist.argslist1.1[[i]])) {
+  if (!is.null(dist.argslist2[[i]])) {
 
-    uncon_test <- test_fn(t=as.numeric(y_test),
-                          #trans="translate",
-                          q_min=1,
-                          q_max=30,
-                          increment=1,
-                          dm=dist.fnlist1[[i]],
-                          dist.argslist1.1[[i]])
+    uncon_test <- do.call(test_fn, c(list(t=as.numeric(testy)),
+                          list(q_min=1),
+                          list(q_max=20),
+                          list(increment=1),
+                          list(dm=dist.fnlist2[[i]]),
+                          dist.argslist2[[i]]))
 
   } else {
     
-    uncon_test <- test_fn(t=as.numeric(y_test),
-                          #trans="translate",
-                          q_min=1,
-                          q_max=30,
-                          increment=1,
-                          dm=dist.fnlist1[[i]])
+    uncon_test <- do.call(test_fn, c(list(t=as.numeric(testy)),
+                          list(q_min=1),
+                          list(q_max=20),
+                          list(increment=1),
+                          list(dm=dist.fnlist2[[i]])))
     
   }
-  
-uncon_test2 <- as.data.frame(do.call(cbind, uncon_test))
+
+uncon_test1.5 <- lapply (uncon_test, function(x) 
+  {
+  y <- vector()
+  y <- x
+  x[is.nan(x)] <- NA
+  if (all(is.na(x))) {y <- NA}
+  else if (abs(max(x, na.rm=TRUE) - min(x, na.rm=TRUE)) > 0.00000001) 
+  {y <- rescale(x, to = c(sample(seq(0,0.05, 0.01), 1), 
+                          sample(seq(0.95,1.05, 0.01), 1)))}
+  else if (abs(max(x, na.rm=TRUE) - min(x, na.rm=TRUE)) == 0) 
+    {y <- (x/x) * sample(seq(0.5, 1, 0.1), 1)}
+  else {y <- x + sample(seq(0, 0.05, 0.01), 1)}
+  return(y)
+  }
+  )
+    
+uncon_test2 <- as.data.frame(do.call(cbind, uncon_test1.5))
 
 # turn results list into a long-form data frame
 uncon_df <- ldply(uncon_test2, 
@@ -608,15 +313,20 @@ uncon_df$Time <- rep(seq(1, length(uncon_test[[1]])), length(uncon_test))
 
 #uncon_df$Test <- as.factor(uncon_df$Test)
 
+#uncon_df$Test <- factor(uncon_df$Test, levels=c("translate",
+#                                                "phase",
+#                                                "extend",
+#                                                "stretch",
+#                                                "whitenoise",
+#                                                "biasednoise",
+#                                                "outlier"))
+
 uncon_df$Test <- factor(uncon_df$Test, levels=c("translate",
-                                                #"scale",
                                                 "phase",
-                                                "extend",
-                                                "stretch",
                                                 "whitenoise",
                                                 "biasednoise",
                                                 "outlier"))
-                                                #"apb"))
+#"apb"))
 
 #uncon_wide <- reshape(uncon_df, 
 #                      timevar="Test",
@@ -631,7 +341,7 @@ uncon_df$Test <- factor(uncon_df$Test, levels=c("translate",
 p[[i]] <- ggplot(uncon_df, aes(x = Time, y = Result, group=Test)) +
   geom_point(aes(color=Test), size=2) +
   scale_colour_manual(labels=plot.names, values=cbPalette) +
-  ggtitle(dist.nameslist1[[i]]) +
+  ggtitle(dist.nameslist2[[i]]) +
   stat_smooth(aes(color=Test), method="loess", span = 0.1, size=0.4) +
   theme(legend.title = element_text(color="blue")) +
   theme_minimal() +
@@ -639,8 +349,8 @@ p[[i]] <- ggplot(uncon_df, aes(x = Time, y = Result, group=Test)) +
   theme(plot.title = element_text(hjust = 0.5),
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        axis.text.x = element_blank())
-        #axis.text.y = element_blank())
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank())
 
 }
 
@@ -651,13 +361,23 @@ p_legend <- ggplot(uncon_df, aes(x = Time, y = Result, group=Test)) +
   stat_smooth(aes(color=Test), method="loess", span = 0.1, size=0.4) +
   theme(legend.title = element_text(color="blue")) +
   theme_minimal() +
-  theme(legend.position="bottom") +
+  theme(legend.position="bottom",
+        legend.key.size=unit(0.7, "cm"),
+        legend.text=element_text(size=10)) +
   theme(legend.title = element_blank()) +
   theme(plot.title = element_text(hjust = 0.5),
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        axis.text.x = element_blank())
-        #axis.text.y = element_blank())
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank())
+
+# Create user-defined function, which extracts legends from ggplots
+extract_legend <- function(my_ggp) {
+  step1 <- ggplot_gtable(ggplot_build(my_ggp))
+  step2 <- which(sapply(step1$grobs, function(x) x$name) == "guide-box")
+  step3 <- step1$grobs[[step2]]
+  return(step3)
+}
 
 # Apply user-defined function to extract legend
 shared_legend <- extract_legend(p_legend)
@@ -687,25 +407,44 @@ p.all <- grid.arrange(arrangeGrob(p[[1]],
                       p[[15]],
                       p[[16]],
                       p[[17]],
+                      p[[18]],
+                      p[[19]],
+                      p[[20]],
+                      p[[21]],
+                      p[[22]],
+                      p[[23]],
+                      p[[24]],
                       ncol=3),
-                      shared_legend,
-                      #nrow=2,
                       heights=c(10,1),
-                      #respect=TRUE,
-                      top = textGrob(paste("Test Results", sep=""),
-                                     gp=gpar(fontsize=16,
-                                             font=4)))
+                      left=textGrob(paste("Dissimilarity", sep=""),
+                                    gp=gpar(fontsize=16),
+                                    rot=90),
+                      shared_legend,
+                      top = textGrob(paste("Uncontrolled Test Results", sep=""),
+                                     gp=gpar(fontsize=16)))
 
 
 #dev.off()
 
 #wd <- getwd()
 
-# write the grid-arranged plot as a jpg image
-#ggsave(paste(wd, "/plots/realworld/", "batch1_plots.jpg", sep=""), p.all)
+# write the grid-arranged plot as a tiff image
+ggsave("plots/realworld/yoga1_1to200_incr10_phil.tiff", p.all,
+       compression="lzw", dpi=1000, height=10000, width=7500, units="px")
 
+tiff(filename="plots/realworld/yoga_and_synthcontrol_ts_plot.jpg", 
+          width = 5000, 
+          height = 3000, 
+          units = "px", 
+          res = 1000,
+          compression="lzw")
+par(mfrow=c(2,1), mai=c(0.5,0.5,0.1,0.1))
+plot(1:427, testy2, type="l", xlab="Time", ylab="", ylim=c(-2,2))
+plot(1:61, tests2, type="l", xlab="Time", ylab="", ylim=c(-2,2))
+dev.off()
 
-
+#################
+ 
 p <- list()
 for (i in 1:length(uncon_test)) {
   new_df <- data.frame(Time = uncon_wide[,1], Results = uncon_wide[,(i+1)])
@@ -756,3 +495,50 @@ p.all <- grid.arrange(p[[1]],
                                      gp=gpar(fontsize=16,
                                              font=4))
                       )
+
+
+trans_invivo <- list()
+
+for (i in seq_along(dist.fnlist1)) {
+  
+  if (!is.null(dist.argslist1.1[[i]])) {
+    
+    trans_invivo[[i]] <- test_fn2(t=as.numeric(sc_test_noclass[23,]),
+                                  trans="translate",
+                                  q_min=1,
+                                  q_max=100,
+                                  increment=1,
+                                  dm=dist.fnlist1[[i]],
+                                  dist.argslist1.1[[i]])
+    
+  } else {
+    
+    trans_invivo[[i]] <- test_fn2(t=as.numeric(sc_test_noclass[23,]),
+                                  trans="translate",
+                                  q_min=1,
+                                  q_max=100,
+                                  increment=1,
+                                  dm=dist.fnlist1[[i]])
+    
+  }
+  
+}
+
+trans_invivo2 <- as.data.frame(do.call(cbind, trans_invivo))
+colnames(trans_invivo2) <- dist.nameslist1
+#time <- seq(1, length(trans_invivo2[,1]))
+#trans_invivo2 <- cbind(trans_invivo2, time)
+trans_invivo_long <- reshape(trans_invivo2, 
+                             varying=as.vector(dist.nameslist1),
+                             v.names="distance",
+                             idvar="size",
+                             timevar="DM",
+                             times=as.vector(dist.nameslist1),
+                             new.row.names = 1:(ncol(trans_invivo2)*nrow(trans_invivo2)),
+                             direction = "long")
+
+ggplot(trans_invivo_long, aes(x = size, y = log(distance+1), group=DM))+
+  geom_point(aes(color=DM)) +
+  geom_jitter(aes(color=DM), width=1)
+#stat_smooth(aes(color=DM), method="loess", span = 0.8)
+
