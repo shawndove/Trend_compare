@@ -79,7 +79,7 @@ uncon_plot_fn <- function(time_series,
   for (i in seq_along(fn_list)) {
     
     # check for extra arguments
-    if (!is.null(args_list[[i]])) {
+    if (args_list[[i]]!="NULL") {
       
       # use this function call if there are extra arguments
       uncon_test <- do.call(test_fn, c(list(t=as.numeric(time_series)),
@@ -181,7 +181,7 @@ uncon_plot_fn <- function(time_series,
     p[[i]] <- ggplot(uncon_df, aes(x = Time, y = Result, group=Test)) +
       geom_point(aes(color=Test), size=2) +
       scale_colour_manual(labels=plot.names, values=cbPalette) +
-      ggtitle(dist.nameslist2[[i]]) +
+      ggtitle(names_list[[i]]) +
       stat_smooth(aes(color=Test), method="loess", span = 0.1, size=0.4) +
       theme(legend.title = element_text(color="blue")) +
       theme_minimal() +

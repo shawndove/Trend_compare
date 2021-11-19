@@ -8,13 +8,13 @@ uncon_plot_fn(time_series = testy,
               q_min = 1,
               q_max = 200,
               increment = 10,
-              package = "ph",
-              fn_list = dist.fnlist2,
-              args_list = dist.argslist2,
-              names_list = dist.nameslist2,
+              package = "ts",
+              fn_list = dist.fnlist1,
+              args_list = dist.argslist1,
+              names_list = dist.nameslist1,
               plotname_special = "test")
 
-
+# plot time series used for uncontrolled testing
 tiff(filename="plots/realworld/yoga_and_synthcontrol_ts_plot.jpg", 
      width = 5000, 
      height = 3000, 
