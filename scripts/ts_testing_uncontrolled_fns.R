@@ -280,3 +280,161 @@ ts_stretch <- function(t, q) { # this is a stretch function, so q should be grea
   
 }
 
+# function to extract legends from ggplots
+extract_legend <- function(my_ggp) {
+  
+  step1 <- ggplot_gtable(ggplot_build(my_ggp))
+  
+  step2 <- which(sapply(step1$grobs, function(x) x$name) == "guide-box")
+  
+  step3 <- step1$grobs[[step2]]
+  
+  return(step3)
+  
+}
+
+# apply all functions at once to a chosen distance measure
+test_fn <- function(t, q_min, q_max, increment, dm, ...) {
+  
+  library(dplyr)
+  
+  set.seed(23)
+  
+  param <- seq(q_min, q_max, increment)
+  
+  counter <- 1
+  
+  results <- list()
+  
+  for (i in param) {
+    
+    try(results$translate[counter] <- dm(ts_translate(t, (i/q_max)), t,...))
+    
+    try(results$phase[counter] <- dm(ts_phase(t, i), t,...))
+    
+    try(results$extend[counter] <- dm(ts_local_extend(t, i), t,...))
+    
+    try(results$stretch[counter] <- dm(ts_stretch(t, (1 + (i/q_max))), t,...)/length(t))
+    
+    try(results$whitenoise[counter] <- dm(t, ts_whitenoise(t, (i/(q_max))),...))
+    
+    try(results$biasednoise[counter] <- dm(ts_biasednoise(t, (i/(0.5*q_max))), t,...))
+    
+    try(results$outlier[counter] <- dm(ts_outlier(t, i), t,...))
+    
+    counter <- counter + 1
+    
+  }
+  
+  return(results)
+  
+}
+
+
+
+# apply a chosen function to all distance measures at once
+test_fn2 <- function(t, trans, q_min, q_max, increment, dm, ...) {
+  
+  param <- seq(q_min, q_max, increment)
+  
+  counter <- 1
+  
+  results <- vector()
+  
+  if (trans=="translate") {
+    
+    for (i in param) {
+      
+      results[counter] <- dm(t, ts_translate(t, (i/q_max)), ...)
+      
+      counter <- counter + 1
+      
+    }
+    
+  } else if (trans=="scale") {
+    
+    for (i in param) {
+      
+      results[counter] <- dm(t, ts_scale(t, (1 + (i/(0.5*length(t))))), ...)
+      
+      counter <- counter + 1
+      
+    }
+    
+  } else if (trans=="phase") {
+    
+    for (i in param) {
+      
+      try(results[counter] <- dm(t, ts_phase(t, i), ...))
+      
+      counter <- counter + 1
+      
+    }
+    
+  } else if (trans=="stretch") {
+    
+    for (i in param) {
+      
+      try(results[counter] <- dm(t, ts_stretch(t, (1 + (i/q_max))), ...))
+      
+      counter <- counter + 1
+      
+    }
+    
+  } else if (trans=="whitenoise") {
+    
+    for (i in param) {
+      
+      results[counter] <- dm(t, ts_whitenoise(t, (i/length(t))), ...)
+      
+      counter <- counter + 1
+      
+    }
+    
+  } else if (trans=="biasednoise") {
+    
+    for (i in param) {
+      
+      results[counter] <- dm(t, ts_biasednoise(t, (i/(0.5*length(t)))), ...)
+      
+      counter <- counter + 1
+      
+    }
+    
+  } else if (trans=="outlier") {
+    
+    for (i in param) {
+      
+      results[counter] <- dm(t, ts_outlier(t, i), ...)
+      
+      counter <- counter + 1
+      
+    }
+    
+  } else if (trans=="delete") {
+    
+    for (i in param) {
+      
+      try(results[counter] <- dm(t, ts_local_delete(t, i), ...))
+      
+      counter <- counter + 1
+      
+    }
+    
+  } else if (trans=="extend") {
+    
+    for (i in param) {
+      
+      try(results[counter] <- dm(t, ts_local_extend(t, i), ...))
+      
+      counter <- counter + 1
+      
+    }
+    
+  }
+  
+  results <- ifelse(results < 0.000001, 0, results)
+  
+  return(results)
+  
+}
