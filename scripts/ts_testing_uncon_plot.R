@@ -24,11 +24,10 @@ uncon_plot_fn <- function(time_series,
   library(plyr)
   library(scales)
   library(TSdist)
-  
-  # load functions and distance measures
+
+  # load functions
   source("scripts/ts_testing_uncontrolled_fns.R")
-  source("scripts/select_distance_measures.R")
-  
+
   if (package=="ts") {
     
     # colour blind friendly palette for plotting
@@ -79,7 +78,7 @@ uncon_plot_fn <- function(time_series,
   for (i in seq_along(fn_list)) {
     
     # check for extra arguments
-    if (args_list[[i]]!="NULL") {
+    #if (args_list[[i]]!="NULL") {
       
       # use this function call if there are extra arguments
       uncon_test <- do.call(test_fn, c(list(t=as.numeric(time_series)),
@@ -89,16 +88,16 @@ uncon_plot_fn <- function(time_series,
                                        list(dm=fn_list[[i]]),
                                        args_list[[i]]))
       
-    } else {
+    #} else {
       
       # use this function call if there are no extra arguments
-      uncon_test <- do.call(test_fn, c(list(t=as.numeric(time_series)),
-                                       list(q_min),
-                                       list(q_max),
-                                       list(increment),
-                                       list(dm=fn_list[[i]])))
+     # uncon_test <- do.call(test_fn, c(list(t=as.numeric(time_series)),
+     #                                  list(q_min),
+     #                                  list(q_max),
+     #                                  list(increment),
+     #                                  list(dm=fn_list[[i]])))
       
-    }
+    #}
     
     # rescale results to [0,1]
     uncon_test1.5 <- lapply(uncon_test, function(x) {

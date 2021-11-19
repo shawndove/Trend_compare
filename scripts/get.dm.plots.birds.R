@@ -32,58 +32,19 @@ get.dm.plot.birds1 <- function(dist.fun,
   
   # unsmoothed time series ----
   
-  # check if any additional arguments are specified for the distance measure
-  if (!is.list(dist.args)) 
+  # loop to compare each pair of time series
+  for (i in seq_along(trends.unsm.res.list)) 
   {
-    
-    # loop to compare each pair of time series
-    for (i in seq_along(trends.unsm.res.list)) 
-    {
       
-      # use this line to call the distance measure fn if there are no extra arguments
-      bird.results$"Unsmoothed"[[i]] <- dist.fun(trends.unsm.res.list[[i]]$imputed, 
-                                                 trends.unsm.cf.list[[i]]$imputed)
+    # call the distance measure function
+    bird.results$"Unsmoothed"[[i]] <- do.call(dist.fun, c(list(trends.unsm.res.list[[i]]$imputed), 
+                                                          list(trends.unsm.cf.list[[i]]$imputed),
+                                                          dist.args))
       
-      # get species name for each pair of time series
-      unsm.species[i] <- as.character(trends.unsm.res.list[[i]]$species[1])
-    }
-    
-  } else 
-  {
-    
-    # loop to compare each pair of time series
-    for (i in seq_along(trends.unsm.res.list)) 
-    {
-      
-      argslist.unsm <- list()
-      
-      argslist.unsm[[1]] <- trends.unsm.res.list[[i]]$imputed
-      
-      names(argslist.unsm)[1] <- "x"
-      
-      argslist.unsm[[2]] <- trends.unsm.cf.list[[i]]$imputed
-      
-      names(argslist.unsm)[2] <- "y"
-      
-      for (j in 1:length(dist.args)) 
-      {
-        
-        argslist.unsm[2+j] <- dist.args[j]
-        
-        names(argslist.unsm)[2+j] <- names(dist.args[j])
-        
-      }
-      
-      # use this line if there are extra arguments
-      bird.results$"Unsmoothed"[[i]] <- do.call(dist.fun, argslist.unsm)
-      
-      # get species name for each pair of time series
-      unsm.species[i] <- as.character(trends.unsm.res.list[[i]]$species[1])
-      
-    }
-    
+    # get species name for each pair of time series
+    unsm.species[i] <- as.character(trends.unsm.res.list[[i]]$species[1])
   }
-  
+
   # create a data frame to hold results in a format compatible with ggplot
   plot.res$"Unsmoothed" <- data.frame(seq_along(trends.unsm.res.list),
                                       bird.results$"Unsmoothed",
@@ -126,58 +87,19 @@ get.dm.plot.birds1 <- function(dist.fun,
   
   # smoothed time series ----
   
-  # check if any additional arguments are specified for the distance measure
-  if (!is.list(dist.args)) 
+  # loop to compare each pair of time series
+  for (i in seq_along(trends.sm.res.list)) 
   {
-    
-    # loop to compare each pair of time series
-    for (i in seq_along(trends.sm.res.list)) 
-    {
       
-      # use this line to call the distance measure fn if there are no extra arguments
-      bird.results$"Smoothed"[[i]] <- dist.fun(trends.sm.res.list[[i]]$sm_fixed, 
-                                                 trends.sm.cf.list[[i]]$sm_fixed)
+    # call the distance measure function
+    bird.results$"Smoothed"[[i]] <- do.call(dist.fun, c(list(trends.sm.res.list[[i]]$sm_fixed), 
+                                                        list(trends.sm.cf.list[[i]]$sm_fixed),
+                                                        dist.args))
       
-      # get species name for each pair of time series
-      sm.species[i] <- as.character(trends.sm.res.list[[i]]$species[1])
-    }
-    
-  } else 
-  {
-    
-    # loop to compare each pair of time series
-    for (i in seq_along(trends.sm.res.list)) 
-    {
-      
-      argslist.sm <- list()
-      
-      argslist.sm[[1]] <- trends.sm.res.list[[i]]$sm_fixed
-      
-      names(argslist.sm)[1] <- "x"
-      
-      argslist.sm[[2]] <- trends.sm.cf.list[[i]]$sm_fixed
-      
-      names(argslist.sm)[2] <- "y"
-      
-      for (j in 1:length(dist.args)) 
-      {
-        
-        argslist.sm[2+j] <- dist.args[j]
-        
-        names(argslist.sm)[2+j] <- names(dist.args[j])
-        
-      }
-      
-      # use this line if there are extra arguments
-      bird.results$"Smoothed"[[i]] <- do.call(dist.fun, argslist.sm)
-      
-      # get species name for each pair of time series
-      sm.species[i] <- as.character(trends.sm.res.list[[i]]$species[1])
-      
-    }
-    
+    # get species name for each pair of time series
+    sm.species[i] <- as.character(trends.sm.res.list[[i]]$species[1])
   }
-  
+    
   # create a data frame to hold results in a format compatible with ggplot
   plot.res$"Smoothed" <- data.frame(seq_along(trends.sm.res.list),
                                       bird.results$"Smoothed",
@@ -293,25 +215,7 @@ get.dm.plot.birds1 <- function(dist.fun,
     
   }
   
-  # arrange the saved plots into one
- # p.all.birds <- grid.arrange(p1.birds,
- #                             p2.birds,
- #                             ncol=2, 
- #                             top = textGrob(paste(print_name, 
- #                                                  " Bird Results", 
- #                                                  sep=""), 
- #                                                  gp=gpar(fontsize=16,
- #                                                  font=4)))
-  
-  # write results to files ----
-  
-  # save working directory path to a variable
-  #wd <- getwd()
-  
-  # write the grid-arranged plot as a jpg image
-  #ggsave(paste(wd, "/plots/bird_results_temp/2/", print_name, "_plots_fixed.jpg", sep=""), p.all.birds)
-  
-  # send the flextable object to the main R environment  
+  # return the ggplot objects
   return(list(p1.birds, p2.birds))
   
 }

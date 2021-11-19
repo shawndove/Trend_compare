@@ -1,8 +1,6 @@
 ti.test.nn.fn1 <- function(dist.fun, 
                         print_name, 
                         dist.args,
-                        x,
-                        y,
                         tpops=100000,
                         tmax=5) 
 {
@@ -52,50 +50,18 @@ ti.test.nn.fn1 <- function(dist.fun,
     
     # create an empty vector to hold results of time series comparisons
     ti_temp_results <- vector()
-    
-    # check if any additional arguments are specified for the distance measure
-    if (!is.list(dist.args)) 
+
+    # loop to test each distance measure for Triangle Inequality
+    for (i in seq_along(tslistx.ti)) 
     {
       
-      # loop to test each distance measure for Triangle Inequality
-      for (i in seq_along(tslistx.ti)) 
-      {
-        
-        # use this line to call the distance measure fn if there are no extra arguments
-        ti_temp_results[i] <- dist.fun(tslistx.ti[[i]], 
-                                       tslisty.ti[[i]])
-      }
-      
-    } else 
-    {
-      
-      # loop to test each distance measure
-      for (i in seq_along(tslistx.ti)) 
-      {
-        
-        argslist.ti <- list()
-        
-        argslist.ti[[1]] <- tslistx.ti[[i]]
-        names(argslist.ti)[1] <- x
-        
-        argslist.ti[[2]] <- tslisty.ti[[i]]
-        names(argslist.ti)[2] <- y
-        
-        for (j in 1:length(dist.args)) 
-        {
-          
-          argslist.ti[2+j] <- dist.args[j]
-          names(argslist.ti)[2+j] <- names(dist.args[j])
-          
-        }
-        
-        # use this line if there are extra arguments
-        ti_temp_results[i] <- do.call(dist.fun, argslist.ti)
-        
-      }
-      
+      # use this line to call the distance measure fn if there are no extra arguments
+      ti_temp_results[i] <- do.call(dist.fun, c(list(tslistx.ti[[i]]), 
+                                                list(tslisty.ti[[i]]),
+                                                dist.args))
     }
     
+    # if there are any NaNs in the results, replace results with NA
     if(any(is.nan(ti_temp_results))) {
       
       ti_results[h] <- NA
@@ -104,10 +70,13 @@ ti.test.nn.fn1 <- function(dist.fun,
       
       rcounter <- rcounter + 3
       
+      # otherwise ...
     } else {
       
+      # add triangle inequality results to list
       ti_full_results[[h]] <- ti_temp_results
       
+      # if there any negative values, set nn result to false, otherwise true
       nn_temp_results[rcounter] <- ifelse(any(ti_temp_results < 0), FALSE, TRUE)
       
       rcounter <- rcounter + 3
@@ -169,7 +138,6 @@ ti.test.nn.fn1 <- function(dist.fun,
   
   final_results <- list(final_ti_result, final_nn_result)
   
-  #return(final_ti_result)
   return(final_results)
   
 }

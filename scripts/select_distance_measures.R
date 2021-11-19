@@ -146,33 +146,33 @@ dist.nameslist2 <- c("Additive",
 
 # extra arguments to apply to distance measures
 # all non-null arguments must be enclosed with list()
-dist.argslist1 <- list("NULL", #Euclidean
-                       "NULL", #Manhattan
-                       "NULL", #Chebyshev
+dist.argslist1 <- list(NULL, #Euclidean
+                       NULL, #Manhattan
+                       NULL, #Chebyshev
                        # list(p=3), #Minkowski
-                       # "NULL", #Dissim
-                       "NULL", #CID
-                       "NULL", #list(window.type="sakoechiba", window.size=60), #DTW
-                       "NULL", #TAM
-                       "NULL", #NCD
-                       "NULL", #CDM
+                       # NULL, #Dissim
+                       NULL, #CID
+                       NULL, #list(window.type="sakoechiba", window.size=60), #DTW
+                       NULL, #TAM
+                       NULL, #NCD
+                       NULL, #CDM
                        list(g=0), #ERP
                        # list(epsilon=0.1), #LCSS
                        list(epsilon=0), #EDR
-                       "NULL", #Fourier
-                       "NULL", #ACF
-                       "NULL", #PACF
-                       "NULL", #Per
-                       "NULL", #IntPer
-                       "NULL", #Piccolo
-                       # "NULL", #PDC
+                       NULL, #Fourier
+                       NULL, #ACF
+                       NULL, #PACF
+                       NULL, #Per
+                       NULL, #IntPer
+                       NULL, #Piccolo
+                       # NULL, #PDC
                        # list(w=5), #SAX
-                       "NULL", #STS
-                       # "NULL", #CCor
-                       "NULL"#, #Cort
-                       #"NULL", #GLK
-                       #"NULL", #LLR
-                       #"NULL", #Hellinger
+                       NULL, #STS
+                       # NULL, #CCor
+                       NULL #Cort
+                       #NULL, #GLK
+                       #NULL, #LLR
+                       #NULL, #Hellinger
                        #list(alpha=10) #SDD
 )
 

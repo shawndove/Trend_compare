@@ -6,9 +6,7 @@ get.dm.result1 <- function(dist.fun,
                           print_name, 
                           dist.args,
                           tsx.list,
-                          tsy.list,
-                          x,
-                          y)
+                          tsy.list)
 {
   
   ### packages ----
@@ -34,8 +32,6 @@ get.dm.result1 <- function(dist.fun,
   test.results$"Amplitude Sensitivity" <- vector()
   test.results$"Duration Sensitivity" <- vector()
   test.results$"Frequency Sensitivity" <- vector()
-  test.results$"Scale Sensitivity" <- vector()
-  test.results$"Noise Sensitivity" <- vector()
   test.results$"White Noise Sensitivity" <- vector()
   test.results$"Biased Noise Sensitivity" <- vector()
   test.results$"Outlier Sensitivity" <- vector()
@@ -43,14 +39,10 @@ get.dm.result1 <- function(dist.fun,
   test.results$"Phase Invariance" <- vector()
   test.results$"Uniform Time Scaling Invariance" <- vector()
   test.results$"Warping Invariance" <- vector()
-  test.results$"Shuffling Invariance" <- vector()
   test.results$"Non-positive Value Handling" <- vector()
   test.results$"Non-negativity" <- vector()
   test.results$"Triangle Inequality" <- vector()
   test.results$"Relative Sensitivity Ranges" <- vector()
-
-  # save working directory path to a variable
-  wd <- getwd()
 
   # create a list to hold plots of some test results
   plot.res <- list()
@@ -60,8 +52,6 @@ get.dm.result1 <- function(dist.fun,
   plot.res$"Amplitude Sensitivity" <- vector()
   plot.res$"Duration Sensitivity" <- vector()
   plot.res$"Frequency Sensitivity" <- vector()
-  plot.res$"Scale Sensitivity" <- vector()
-  plot.res$"Noise Sensitivity" <- vector()
   plot.res$"White Noise Sensitivity" <- vector()
   plot.res$"Biased Noise Sensitivity" <- vector()
   plot.res$"Outlier Sensitivity" <- vector()
@@ -69,7 +59,6 @@ get.dm.result1 <- function(dist.fun,
   plot.res$"Phase Invariance" <- vector()
   plot.res$"Uniform Time Scaling Invariance" <- vector()
   plot.res$"Warping Invariance" <- vector()
-  plot.res$"Shuffling Invariance" <- vector()
   plot.res$"Non-positive Value Handling" <- vector()
   plot.res$"Non-negativity" <- vector()
   plot.res$"Triangle Inequality" <- vector()
@@ -84,21 +73,25 @@ get.dm.result1 <- function(dist.fun,
   
   # testing: loop ----
   
+  # loop along list of time series for each test
   for (i in 1:length(tsx.list)) {
-
+  
+  # call testing function
   temp.list <- test.results.fn(tsx.list[[i]], 
                                tsy.list[[i]], 
-                               x, 
-                               y, 
                                dist.fun, 
                                dist.args)
   
+  # put returned objects into their respective lists
+  
+  # a vector of test results
   test.results[[i]] <- temp.list[[1]]
   
+  # a dataframe for plotting
   plot.res[[i]] <- temp.list[[2]]
   
+  # ylim values for ggplot
   ymin[[i]] <- temp.list[[3]]
-  
   ymax[[i]] <- temp.list[[4]]
   
   }
@@ -162,6 +155,15 @@ get.dm.result1 <- function(dist.fun,
     
   }
   
+  # if there are no results, replace with NA
+  if(length(test.results$"Relative Sensitivity Ranges")==0)
+  {
+    
+    test.results$"Relative Sensitivity Ranges" <- NA
+    
+  }
+  
+  # create a data frame of relative sensitivity results for plotting
   
   sens <- seq(1,length(test.results$"Relative Sensitivity Ranges"))  
   
@@ -170,33 +172,42 @@ get.dm.result1 <- function(dist.fun,
   
   colnames(plot.res$"Relative Sensitivity Ranges") <- c("x", "y")
   
-  if (is.na(max(test.results$"Relative Sensitivity Ranges"))) 
+  # this code sets the ylim values that will be used for ggplot later on
+  
+  # if all test results are NA, set ymin and ymax to NA so no plot will be made
+  if (all(is.na(test.results$"Relative Sensitivity Ranges"))) 
   {
     
     ymin.range <- NA
     
     ymax.range <- NA
     
-  } else if (is.nan(max(test.results$"Relative Sensitivity Ranges")))
+    # if all test results are NaN, set ymin and ymax to NA so no plot will be made
+  } else if (all(is.nan(test.results$"Relative Sensitivity Ranges")))
   {
     
     ymin.range <- NA
     
     ymax.range <- NA
     
-  } else if (max(abs(test.results$"Relative Sensitivity Ranges")) < 0.01) 
+    # if max result is very small, set ymin and ymax very small 
+  } else if (max(abs(test.results$"Relative Sensitivity Ranges"), na.rm=TRUE) < 0.01) 
   {
     
     ymin.range <- -0.01
     
     ymax.range <- 0.01
     
+    # otherwise set ymin and ymax to slightly below and above (respectively) 
+    # the range of test results
   } else 
   {
     
-    ymin.range <- min(test.results$"Relative Sensitivity Ranges") - 0.1*min(abs(test.results$"Relative Sensitivity Ranges"))
+    ymin.range <- min(test.results$"Relative Sensitivity Ranges", na.rm=TRUE) - 
+      0.1*min(abs(test.results$"Relative Sensitivity Ranges"), na.rm=TRUE)
     
-    ymax.range <- max(test.results$"Relative Sensitivity Ranges") + 0.1*max(abs(test.results$"Relative Sensitivity Ranges"))
+    ymax.range <- max(test.results$"Relative Sensitivity Ranges", na.rm=TRUE) + 
+      0.1*max(abs(test.results$"Relative Sensitivity Ranges"), na.rm=TRUE)
     
   }  
   
@@ -214,11 +225,9 @@ get.dm.result1 <- function(dist.fun,
   tr_dataframe$Time <- c(seq(1, length(test.results$"Uniqueness")), 
                          seq(1, length(test.results$"Symmetry")),
                          seq(1, length(test.results$"Translation Sensitivity")),
-                         seq(1, length(test.results$"Scale Sensitivity")),
                          seq(1, length(test.results$"Amplitude Sensitivity")), 
                          seq(1, length(test.results$"Duration Sensitivity")),
                          seq(1, length(test.results$"Frequency Sensitivity")),
-                         seq(1, length(test.results$"Noise Sensitivity")),
                          seq(1, length(test.results$"White Noise Sensitivity")),
                          seq(1, length(test.results$"Biased Noise Sensitivity")),
                          seq(1, length(test.results$"Outlier Sensitivity")),
@@ -226,7 +235,6 @@ get.dm.result1 <- function(dist.fun,
                          seq(1, length(test.results$"Phase Invariance")),
                          seq(1, length(test.results$"Uniform Time Scaling Invariance")),
                          seq(1, length(test.results$"Warping Invariance")),
-                         seq(1, length(test.results$"Shuffling Invariance")),
                          seq(1, length(test.results$"Non-positive Value Handling")),
                          seq(1, length(test.results$"Non-negativity")),
                          seq(1, length(test.results$"Triangle Inequality")),
@@ -343,38 +351,57 @@ get.dm.result1 <- function(dist.fun,
     }
     
   }
+  
+  # choose plots to arrange together into single plot
+  p_plot <- list(p[[3]], 
+                 p[[4]], 
+                 p[[5]], 
+                 p[[6]], 
+                 p[[7]], 
+                 p[[8]], 
+                 p[[9]], 
+                 p[[10]],
+                 p[[11]],
+                 p[[12]],
+                 p[[13]])
  
-  # arrange all the plots into one
-  p.all <- grid.arrange(p[[3]],
-                        p[[4]],
-                        p[[5]],
-                        p[[6]],
-                        p[[7]],
-                        p[[9]],
-                        p[[10]],
-                        p[[11]],
-                        p[[12]],
-                        p[[13]],
-                        p[[14]],
-                        p[[15]],
-                        ncol=4,
-                        top = textGrob(paste(print_name, " Test Results", sep=""),
+  # arrange chosen plots into one
+  p.all <- do.call(grid.arrange, c(p_plot, ncol=3),
+                                 top = textGrob(paste(print_name, 
+                                                      " Test Results", 
+                                                      sep=""),
                                        gp=gpar(fontsize=16,
                                                font=4)))
 
   # write results to files ----
-  
- 
+
   # write the grid-arranged plot as a jpg image
-  ggsave(paste("plots/test_results_temp/", print_name, "_plots.jpg", sep=""), p.all)
+  ggsave(filename = paste(print_name, 
+                          "_plots.tiff", 
+                          sep=""),
+         path = "plots/test_results_temp/",
+         plot = p.all,
+         device = "tiff",
+         width = 2000,
+         height = 2000,
+         units = "px",
+         dpi = 1000,
+         compression = "lzw")
   
   # write the flextable as a Word document
   save_as_docx(tr_table, 
-               path = paste("tables/test_results_temp/", print_name, "_table.docx", sep=""))
+               path = paste("tables/test_results_temp/", 
+                            print_name, "_table.docx", 
+                            sep=""))
   
   # write the wide-form data table to an R file
-  saveRDS(tr_wide, file = paste("files/wide_temp/", print_name, "_dfwide.RData", sep=""))
-  # send the flextable object to the main R environment  
+  saveRDS(tr_wide, 
+          file = paste("files/wide_temp/", 
+                       print_name, 
+                       "_dfwide.RData", 
+                       sep=""))
+  
+  # return the flextable object
   return(tr_table)
   
 }

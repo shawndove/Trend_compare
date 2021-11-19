@@ -12,9 +12,13 @@ library(flextable)
 library(ggplot2)
 library(ggpubr)
 
-# Distance measures ----
+# Load distance measures ----
 
 source("scripts/select_distance_measures.R")
+
+# Load controlled time series ----
+
+source("scripts/ts_controlled.R")
 
 # Load functions ----
 
@@ -39,18 +43,19 @@ ti_nn_table2 <- list()
 # test for triangle inequality and non-negative value handling
 # this function generates negative values
 for(i in seq_along(dist.fnlist1)) {
+  
   ti_table[[i]] <- ti.test.fn1(dist.fun=dist.fnlist1[[i]], 
                                dist.nameslist1[i], 
-                               dist.argslist1[[i]],
-                               "x",
-                               "y")
+                               dist.argslist1[[i]])
+  
 }
+
 for(i in seq_along(dist.fnlist2)) {
+  
   ti_table2[[i]] <- ti.test.fn1(dist.fun=dist.fnlist2[[i]], 
                                 dist.nameslist2[i], 
-                                dist.argslist2[[i]],
-                                "P",
-                                "Q")
+                                dist.argslist2[[i]])
+  
 }
 
 # test for triangle inequality and non-negative value handling
@@ -59,16 +64,15 @@ for(i in seq_along(dist.fnlist1)) {
 
   ti_nn_table[[i]] <- ti.test.nn.fn1(dist.fun=dist.fnlist1[[i]], 
                                dist.nameslist1[i], 
-                               dist.argslist1[[i]],
-                               "x",
-                               "y")
+                               dist.argslist1[[i]])
+  
 }
 for(i in seq_along(dist.fnlist2)) {
+  
   ti_nn_table2[[i]] <- ti.test.nn.fn1(dist.fun=dist.fnlist2[[i]], 
                                 dist.nameslist2[i], 
-                                dist.argslist2[[i]],
-                                "P",
-                                "Q")
+                                dist.argslist2[[i]])
+  
 }
 
 # create lists to temporarily hold results tables
@@ -90,9 +94,7 @@ for(i in seq_along(dist.fnlist1)) {
                                    dist.nameslist1[i], 
                                    dist.argslist1[[i]],
                                    tsx.list,
-                                   tsy.list,
-                                   "x",
-                                   "y")
+                                   tsy.list)
   
   # repeat for bird data
 #  temp_table_birds[[i]] <- get.dm.result.birds1(dist.fun=dist.fnlist1[[i]], 
@@ -155,12 +157,10 @@ for(i in seq_along(dist.fnlist2)) {
                                     dist.nameslist2[i], 
                                     dist.argslist2[[i]],
                                     tsx.list,
-                                    tsy.list,
-                                    "P",
-                                    "Q")
+                                    tsy.list)
 
   # repeat for bird data
-#  temp_table_birds[[i]] <- get.dm.result.birds2(dist.fun=dist.fnlist2[[i]], 
+#  temp_table_birds[[i]] <- get.dm.result.birds1(dist.fun=dist.fnlist2[[i]], 
 #                                               dist.nameslist2[i], 
 #                                               dist.argslist2[[i]])
   
@@ -246,7 +246,7 @@ dist.argslist.usplots2 <- list(list(testNA=FALSE, unit="log"), list(testNA=FALSE
 unsmoothed.plots2 <- list()
 for (i in seq_along(dist.fnlist.usplots2)) {
   
-  unsmoothed.plots2[[i]] <- get.dm.plot.birds2(dist.fnlist.usplots2[[i]], dist.nameslist.usplots2[i], dist.argslist.usplots2[[i]])[[1]]
+  unsmoothed.plots2[[i]] <- get.dm.plot.birds1(dist.fnlist.usplots2[[i]], dist.nameslist.usplots2[i], dist.argslist.usplots2[[i]])[[1]]
   
 }
 
@@ -332,7 +332,7 @@ for (i in seq_along(dist.fnlist.plots)) {
 }
 for (i in seq_along(dist.fnlist.plots2)) {
   
-  smoothed.plots2[[i]] <- get.dm.plot.birds2(dist.fnlist.plots2[[i]], dist.nameslist.plots2[i], dist.argslist.plots2[[i]])[[2]]
+  smoothed.plots2[[i]] <- get.dm.plot.birds1(dist.fnlist.plots2[[i]], dist.nameslist.plots2[i], dist.argslist.plots2[[i]])[[2]]
 
 }
 
