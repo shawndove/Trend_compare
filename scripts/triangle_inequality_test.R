@@ -1,8 +1,6 @@
 ti.test.fn1 <- function(dist.fun, 
                        print_name, 
                        dist.args,
-                       x,
-                       y,
                        tpops=100000,
                        tmax=5) 
 {

@@ -1,4 +1,5 @@
-
+# generate time series for triangle inequality and non-negativity testing
+# this version does not produce any negative values
 pgrowth_nn <- function(tpops, tmax, gr_start, gr_mean, gr_sd) {
   
   if(gr_start < 0) {

@@ -80,25 +80,14 @@ uncon_plot_fn <- function(time_series,
     # check for extra arguments
     #if (args_list[[i]]!="NULL") {
       
-      # use this function call if there are extra arguments
+      # call the function
       uncon_test <- do.call(test_fn, c(list(t=as.numeric(time_series)),
                                        list(q_min),
                                        list(q_max),
                                        list(increment),
-                                       list(dm=fn_list[[i]]),
-                                       args_list[[i]]))
+                                       list(dm=fn_list[[12]]),
+                                       args_list[[12]]))
       
-    #} else {
-      
-      # use this function call if there are no extra arguments
-     # uncon_test <- do.call(test_fn, c(list(t=as.numeric(time_series)),
-     #                                  list(q_min),
-     #                                  list(q_max),
-     #                                  list(increment),
-     #                                  list(dm=fn_list[[i]])))
-      
-    #}
-    
     # rescale results to [0,1]
     uncon_test1.5 <- lapply(uncon_test, function(x) {
       

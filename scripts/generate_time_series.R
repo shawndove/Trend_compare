@@ -1,4 +1,4 @@
-
+# generate time series for triangle inequality and non-negativity testing
 pgrowth <- function(tpops, tmax, gr_start, gr_mean, gr_sd) {
   
   t_dist <- rnorm(10000, gr_mean, gr_sd)

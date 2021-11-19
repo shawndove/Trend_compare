@@ -6,6 +6,7 @@ test.unq.a <- c(1, 1, 2, 2, 1, 1, 1, 1, 1, 1)
 test.unq.b <- c(1, 1, 2, 2, 1, 1, 1, 1, 1, 1)
 
 tslistx.unq <- list(test.unq.b)
+
 tslisty.unq <- list(test.unq.a)
 
 # Symmetry ----
@@ -15,6 +16,7 @@ test.sym.b <- c(3, 0.1, 1, 3, 0.1, 2, 4, 2, 2, 2)
 
 tslistx.sym <- list(test.sym.b,
                     test.sym.a)
+
 tslisty.sym <- list(test.sym.a,
                     test.sym.b)
 
@@ -28,16 +30,16 @@ test.trans.e <- c(1.4, 1.4, 2.4, 2.4, 1.4, 1.4, 1.4, 1.4, 1.4, 1.4)
 test.trans.f <- c(1.5, 1.5, 2.5, 2.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5)
 
 tslistx.trans <- list(test.trans.b,
-                    test.trans.c,
-                    test.trans.d,
-                    test.trans.e,
-                    test.trans.f)
+                      test.trans.c,
+                      test.trans.d,
+                      test.trans.e,
+                      test.trans.f)
 
 tslisty.trans <- list(test.trans.a,
-                    test.trans.a,
-                    test.trans.a,
-                    test.trans.a,
-                    test.trans.a)
+                      test.trans.a,
+                      test.trans.a,
+                      test.trans.a,
+                      test.trans.a)
 
 # Phase invariance ----
 
@@ -72,6 +74,7 @@ tslistx.uni <- list(test.uni.b,
                     test.uni.c,
                     test.uni.d,
                     test.uni.e)
+
 tslisty.uni <- list(test.uni.a,
                     test.uni.a,
                     test.uni.a,
@@ -96,7 +99,7 @@ tslisty.warp <- list(test.warp.a,
                      test.warp.a,
                      test.warp.a,
                      test.warp.a,
-                     test.warp.f)
+                     test.warp.a)
 
 # Amplitude sensitivity ----
 
@@ -142,12 +145,12 @@ tslisty.dur <- list(test.dur.a,
 
 # Frequency Sensitivity ----
 
-test.freq.a <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-test.freq.b <- c(1, 2, 1, 1, 1, 1, 1, 1, 1, 1)
-test.freq.c <- c(1, 2, 1, 2, 1, 1, 1, 1, 1, 1)
-test.freq.d <- c(1, 2, 1, 2, 1, 2, 1, 1, 1, 1)
-test.freq.e <- c(1, 2, 1, 2, 1, 2, 1, 2, 1, 1)
-test.freq.f <- c(1, 2, 1, 2, 1, 2, 1, 2, 1, 2)
+test.freq.a <- c(1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+test.freq.b <- c(1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1)
+test.freq.c <- c(1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1)
+test.freq.d <- c(1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1)
+test.freq.e <- c(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1)
+test.freq.f <- c(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2)
 
 tslistx.freq <- list(test.freq.b,
                      test.freq.c,
@@ -168,10 +171,10 @@ test.par.b <- c(1, 1, 0.5, 0.5, 1, 1, 1, 1, 1, 1)
 test.par.c <- c(1, 1, 2.5, 2.5, 1, 1, 1, 1, 1, 1)
 
 tslistx.par <- list(test.par.b,
-                     test.par.c)
+                    test.par.c)
 
 tslisty.par <- list(test.par.a,
-                     test.par.a)
+                    test.par.a)
 
 # White Noise Sensitivity ----
 

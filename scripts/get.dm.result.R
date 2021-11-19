@@ -366,7 +366,7 @@ get.dm.result1 <- function(dist.fun,
                  p[[13]])
  
   # arrange chosen plots into one
-  p.all <- do.call(grid.arrange, c(p_plot, ncol=3),
+  p.all <- grid.arrange(do.call(arrangeGrob, c(p_plot, ncol=3)),
                                  top = textGrob(paste(print_name, 
                                                       " Test Results", 
                                                       sep=""),
@@ -382,8 +382,8 @@ get.dm.result1 <- function(dist.fun,
          path = "plots/test_results_temp/",
          plot = p.all,
          device = "tiff",
-         width = 2000,
-         height = 2000,
+         width = 8000,
+         height = 8000,
          units = "px",
          dpi = 1000,
          compression = "lzw")

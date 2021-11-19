@@ -15,7 +15,9 @@ test.results.fn <- function(tslistx,
   {
       
     # call the distance measure function
-    try(test.results[[i]] <- do.call(dist.fun, c(list(tslistx[[i]]), list(tslisty[[i]]), dist.args)))
+    try(test.results[[i]] <- do.call(dist.fun, c(list(tslistx[[i]]), 
+                                                 list(tslisty[[i]]), 
+                                                 dist.args)))
       
   }
 
