@@ -26,7 +26,7 @@ source("scripts/triangle_inequality_test.R")
 source("scripts/triangle_inequality_test_nnonly.R")
 source("scripts/get.dm.result.R")
 source("scripts/get.dm.result.birds.R")
-source("scripts/get.dm.plot.birds.R")
+source("scripts/get.dm.plots.birds.R")
 
 # Produce test results ----
 

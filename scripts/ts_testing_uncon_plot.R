@@ -20,8 +20,8 @@ uncon_plot_fn <- function(time_series,
   library(patchwork)
   library(gridExtra)
   library(grid)
-  library(dplyr)
   library(plyr)
+  library(dplyr)
   library(scales)
   library(TSdist)
 
@@ -85,8 +85,8 @@ uncon_plot_fn <- function(time_series,
                                        list(q_min),
                                        list(q_max),
                                        list(increment),
-                                       list(dm=fn_list[[12]]),
-                                       args_list[[12]]))
+                                       list(dm=fn_list[[i]]),
+                                       args_list[[i]]))
       
     # rescale results to [0,1]
     uncon_test1.5 <- lapply(uncon_test, function(x) {
