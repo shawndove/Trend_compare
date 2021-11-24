@@ -70,6 +70,9 @@ uncon_plot_fn <- function(time_series,
     stop("You have specified the package incorrectly. Please enter 'ts' or 'ph'.")
     
   }
+
+  # create list for raw data
+  uncon_list <- list()
   
   # create list for plots
   p <- list()
@@ -91,8 +94,13 @@ uncon_plot_fn <- function(time_series,
     # rescale results to [0,1]
     uncon_test1.5 <- lapply(uncon_test, function(x) {
       
+      # set the seed to NULL so it will change with each loop of lapply
+      set.seed(sample(1:500, 1))
+      
+      # create a vector to hold results
       y <- vector()
       
+      # copy x into the vector
       y <- x
       
       # replace NaN values with NA
@@ -119,7 +127,7 @@ uncon_plot_fn <- function(time_series,
         
         # # if the range IS extremely small, convert all values to the same randomly chosen value
         # between 0.5 and 1. This is to convey insensitivity while avoiding overplotting
-      {y <- (x/x) * sample(seq(0.5, 1, 0.1), 1)}
+      {y <- (x/x) * sample(seq(0.4, 0.6, 0.01), 1)}
       
       return(y) 
       
@@ -159,6 +167,7 @@ uncon_plot_fn <- function(time_series,
                                                       "biasednoise",
                                                       "outlier"))
       
+      
     }
     
     # create results plots ----
@@ -167,7 +176,7 @@ uncon_plot_fn <- function(time_series,
     # plot all tests in one plot
     # note that the legend is suppressed, but will be added later
     p[[i]] <- ggplot(uncon_df, aes(x = Time, y = Result, group=Test)) +
-      geom_point(aes(color=Test), size=2) +
+      geom_point(aes(color=Test), size=2, alpha = 0.2) +
       scale_colour_manual(labels=plot.names, values=cbPalette) +
       ggtitle(names_list[[i]]) +
       stat_smooth(aes(color=Test), method="loess", span = 0.1, size=0.4) +
@@ -180,11 +189,14 @@ uncon_plot_fn <- function(time_series,
             axis.text.x = element_blank(),
             axis.text.y = element_blank())
     
+    # add raw data to list
+    uncon_list[[i]] <- uncon_df
+
   }
   
   # create a single plot with a legend
   p_legend <- ggplot(uncon_df, aes(x = Time, y = Result, group=Test)) +
-    geom_point(aes(color=Test), size=2) +
+    geom_point(aes(color=Test), size=2, alpha = 0.2) +
     scale_colour_manual(labels=plot.names, values=cbPalette) +
     stat_smooth(aes(color=Test), method="loess", span = 0.1, size=0.4) +
     theme(legend.title = element_text(color="blue")) +
@@ -228,11 +240,14 @@ uncon_plot_fn <- function(time_series,
                         sep = ""), 
          plot = p.all, 
          device = "tiff",
-         path = "plots/realworld/",
+         path = "figures/",
          compression = "lzw", 
          dpi = 1000, 
          height = 10000, 
          width = 7500, 
          units = "px")
+  
+  # return raw data list
+  return(uncon_list)
   
 }

@@ -160,7 +160,7 @@ dist.argslist1 <- list(NULL, #Euclidean
                        NULL, #CDM
                        list(g=0), #ERP
                        # list(epsilon=0.1), #LCSS
-                       list(epsilon=0), #EDR
+                       list(epsilon=0.1), #EDR
                        NULL, #Fourier
                        NULL, #ACF
                        NULL, #PACF

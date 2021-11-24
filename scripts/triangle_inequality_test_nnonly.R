@@ -133,8 +133,8 @@ ti.test.nn.fn1 <- function(dist.fun,
   wd <- getwd()
   
   # save full results as RData file
-  saveRDS(ti_full_results, file = paste(wd, "/files/ti_results2_nnonly/", print_name, "_tifull.RData", sep=""))
-  saveRDS(nn_full_results, file = paste(wd, "/files/nn_results2_nnonly/", print_name, "_nnfull.RData", sep=""))
+  saveRDS(ti_full_results, file = paste(wd, "/files/ti_results_nnonly/", print_name, "_ti_nnonly.RData", sep=""))
+  saveRDS(nn_full_results, file = paste(wd, "/files/nn_results_nnonly/", print_name, "_nn_nnonly.RData", sep=""))
   
   final_results <- list(final_ti_result, final_nn_result)
   

@@ -18,14 +18,14 @@ for (i in seq_along(dist.names)) {
   metric_tr <- vector()
   
   # load uniqueness and symmetry results from saved file
-  temp <- readRDS(file = paste("files/wide_temp/", print_name, "_dfwide.RData", sep=""))
+  temp <- readRDS(file = paste("files/controlled_results/", print_name, "_dfwide.RData", sep=""))
   
   # load triangle inequality test results from saved file
-  temp_ti <- readRDS(file = paste("files/ti_results_temp/", print_name, "_tifull.RData", sep=""))
+  temp_ti <- readRDS(file = paste("files/ti_results/", print_name, "_tifull.RData", sep=""))
   ti_l <- length(temp_ti)
   
   # load non-negativity test results from saved file
-  temp_nn <- readRDS(file = paste("files/nn_results_temp/", print_name, "_nnfull.RData", sep=""))
+  temp_nn <- readRDS(file = paste("files/nn_results/", print_name, "_nnfull.RData", sep=""))
   
   # 0 for uniqueness is a pass, any other value is a fail
   interpreted.results$"Uniqueness"[i] <- ifelse(temp[1,2] == 0, "Yes", "No")
@@ -193,7 +193,7 @@ for (i in seq_along(dist.names)) {
   print_name <- dist.names[i]
   
   # load wide format test results from saved file
-  temp_levels1 <- readRDS(file = paste("files/wide_temp/", print_name, "_dfwide.RData", sep=""))
+  temp_levels1 <- readRDS(file = paste("files/controlled_results/", print_name, "_dfwide.RData", sep=""))
   
   # get the relative sensitivity range results
   temp_levels[[i]] <- temp_levels1[17,]
@@ -253,14 +253,14 @@ for (j in 3:9) {
     print_name <- dist.names[[i]]
     
     # load wide format test results
-    temp <- readRDS(file = paste("files/wide_temp/", print_name, "_dfwide.RData", sep=""))
+    temp <- readRDS(file = paste("files/controlled_results/", print_name, "_dfwide.RData", sep=""))
     
-    # define exceptions
+    # interpret and classify results
     ir_temp[i] <-
-      ifelse(all(abs(temp[j,2:5]) < 0.000001), "Inv",
-             ifelse((max(temp[j,2:5]) - min(temp[j,2:5])) < 0.000001, "Very Low", 
-                    ifelse((temp[j,5] > temp[j,4] & temp[j,4] > temp[j,3] & temp[j,3] > temp[j,2]) |
-                             (temp[j,5] < temp[j,4] & temp[j,4] < temp[j,3] & temp[j,3] < temp[j,2]),
+      ifelse(all(abs(temp[j,2:6]) < 0.000001), "Inv",
+             ifelse((max(temp[j,2:6]) - min(temp[j,2:6])) < 0.000001, "Very Low", 
+                    ifelse((temp[j,6] > temp[j,5] & temp[j,5] > temp[j,4] & temp[j,4] > temp[j,3] & temp[j,3] > temp[j,2]) |
+                             (temp[j,6] < temp[j,5] & temp[j,5] < temp[j,4] & temp[j,4] < temp[j,3] & temp[j,3] < temp[j,2]),
                            as.character(levels_binned[[j-2]][print_name,]$Levels), "Unpredictable")))
     
   }
@@ -305,16 +305,6 @@ test_long$Level <- c(interpreted.results.2[,1], interpreted.results.2[,2], inter
                      interpreted.results.2[,4], interpreted.results.2[,5], interpreted.results.2[,6],
                      interpreted.results.2[,7])
 
-#test_long$Value[test_long$DM=="NCD" | test_long$DM=="CDM"] <- c(0, 0, -1, -1, -1, -1, -1, -1, -1, -1,
-#                                                                -1, -1, -1, -1)
-
-#test_long$Level[test_long$DM=="NCD" | test_long$DM=="CDM"] <- c(2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-#                                                                0, 0)
-
-# TAM appeared from our tests to be invariant to white noise, but further testing revealed this to be 
-# incorrect at higher values.
-test_long$Level[test_long$DM=="TAM" & test_long$Test=="White Noise Sensitivity"] <- "Unpredictable"
-
 test_long$Level <- factor(test_long$Level, 
                           levels=c(1,2,3,4,5,6, 7), 
                           labels=c("Unpredictable","Invariant", "Very Low", "Low", "Medium", "High", "Very High"))
@@ -328,18 +318,9 @@ test_long$Type <- factor(test_long$Type, levels=c("Minkowski", "Intersection", "
 test_long$DM[test_long$DM=="KumarJohnson"]<-"Kumar"
 test_long$DM[test_long$DM=="WaveHedges"]<-"Wave"
 test_long$DM[test_long$DM=="EDR"]<-"*EDR"
-#test_long$DM[test_long$DM=="NCD"]<-"\u2020NCD"
-#test_long$DM[test_long$DM=="CDM"]<-"\u2020CDM"
 
 test_long$Value[test_long$Level=="Unpredictable"] <- -1
 
-#test_long$Point <- rep("Yes", times=301)
-#test_long$Point[test_long$DM=="NCD" | test_long$DM=="CDM"] <- "No"
-#test_long$Point[7] <- "Yes"
-#test_long$Point[8] <- "Yes"
-#test_long$Point <- factor(test_long$Point, levels=c("Yes", "No"), labels=c("Yes", "No"))
-
-#cbPalette <- c("snow", scales::seq_gradient_pal("skyblue", "orange", "Lab")(c(0, 0.2, 0.4, 0.7, 1)))
 cbPalette <- c("gray56", "snow", "steelblue1", "lightsteelblue1", "gray88", "#E6BF86", "#FFA500")
 
 ptall <-ggplot(test_long, aes(x = Test, 
@@ -352,7 +333,7 @@ ptall <-ggplot(test_long, aes(x = Test,
                             "White Noise", "Biased Noise", "Outlier"))+
   facet_wrap(Type~., scales="free_y", ncol=2) +
   labs(caption = "\n\n\n\n\n Sensitivity Ranges: Very Low: < 0.2, Low: 0.2 - 0.7, Medium: 0.7 - 1.3, High: 1.3 - 2.5, Very High: > 2.5.
-\n *The results for EDR strongly depended on the threshold setting, epsilon. Here, it was set to 0.") +
+\n *The results for EDR strongly depended on the threshold setting, epsilon. Here, it was set to 0.1.") +
   ggtitle(paste("Sensitivity Test Results")) +
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5),
@@ -360,7 +341,6 @@ ptall <-ggplot(test_long, aes(x = Test,
         axis.title.y = element_blank(),
         axis.text.x = element_text(size=14, angle=90, vjust=0.2, hjust=1),
         axis.text.y = element_text(size=14),
-        #legend.text = element_text(size=12),
         legend.position = c(0.5, -0.24),
         legend.direction = "horizontal",
         legend.title = element_blank(),
@@ -391,50 +371,62 @@ ggsave(paste("figures/sens_test_results.tiff", sep=""),
 
 # other properties ----
 
+# create a list to hold results
 interpreted.results <- list()
 
+# loop along names of distance measures
 for (i in seq_along(dist.names)) {
   
+  # put distance measure name into a vector
   print_name <- dist.names[[i]]
   
-  metric_tr <- vector()
+  # load wide format test results
+  temp <- readRDS(file = paste("files/controlled_results/", print_name, "_dfwide.RData", sep=""))
   
-  temp <- readRDS(file = paste(wd, "/files/wide_temp/", print_name, "_dfwide.RData", sep=""))
-  
+  # interpret and classify antiparallelism bias results
   interpreted.results$"Antiparallelism Bias"[i] <- 
-    ifelse(temp[12,3] == temp[12,2], "Neutral", 
-           ifelse(temp[12,3] > temp[12,2], "Positive", "Negative"))
+    ifelse(temp[10,3] == temp[10,2], "Neutral", 
+           ifelse(temp[10,3] > temp[10,2], "Positive", "Negative"))
   
+  # interpret and classify non-positive value handling results
   interpreted.results$"Non-positive Value Handling"[i] <-
-    ifelse(!is.na(temp[17,3]) & !is.nan(temp[17,3]), 
-           ifelse(!is.na(temp[17,4]) & !is.nan(temp[17,4]), "All", "Zeros Only"), 
-           ifelse(!is.na(temp[17,4]) & !is.nan(temp[17,4]), "Negative Only", "None"))
+    ifelse(!is.na(temp[14,3]) & !is.nan(temp[14,3]), 
+           ifelse(!is.na(temp[14,4]) & !is.nan(temp[14,4]), "All", "Zeros Only"), 
+           ifelse(!is.na(temp[14,4]) & !is.nan(temp[14,4]), "Negative Only", "None"))
   
+  # interpret and classify results for phase invariance
   interpreted.results$"Phase Invariance"[i] <-
-    ifelse(all(abs(temp[13,2:5]) < 0.000001), "Invariant", 
-           ifelse((temp[13,5] > temp[13,4] & temp[13,4] > temp[13,3] & temp[13,3] > temp[13,2]) |
-                    (temp[13,5] < temp[13,4] & temp[13,4] < temp[13,3] & temp[13,3] < temp[13,2]) , "Sensitive", 
-                  ifelse((max(temp[13,2:5]) - min(temp[13,2:5])) < 0.000001, "Insensitive", "Unpredictable")))
+    ifelse(all(abs(temp[11,2:6]) < 0.000001), "Invariant", 
+           ifelse((max(diff(as.vector(as.matrix(temp[11,2:6])))) / mean(diff(as.vector(as.matrix(temp[11,2:6])))) > 2), "Unpredictable",
+           ifelse((temp[11,6] > temp[11,5] & temp[11,5] > temp[11,4] & temp[11,4] > temp[11,3] & temp[11,3] > temp[11,2]) |
+                    (temp[11,6] < temp[11,5] & temp[11,5] < temp[11,4] & temp[11,4] < temp[11,3] & temp[11,3] < temp[11,2]) , "Sensitive", 
+                  ifelse((max(temp[11,2:6]) - min(temp[11,2:6])) < 0.000001, "Insensitive", "Unpredictable"))))
   
+  # interpret and classify results for uniform time scaling invariance
   interpreted.results$"Uniform Time Scaling Invariance"[i] <-
-    ifelse(all(is.na(temp[14,2:5])), "NA", 
-           ifelse(all(abs(temp[14,2:5]) < 0.000001), "Invariant", 
-                  ifelse((temp[14,5] > temp[14,4] & temp[14,4] > temp[14,3] & temp[14,3] > temp[14,2]) |
-                           (temp[14,5] < temp[14,4] & temp[14,4] < temp[14,3] & temp[14,3] < temp[14,2]), "Sensitive", 
-                         ifelse((max(temp[14,2:5]) - min(temp[14,2:5])) < 0.000001, "Insensitive", "Unpredictable"))))
+    ifelse(all(is.na(temp[12,2:6])), "NA", 
+           ifelse((max(diff(as.vector(as.matrix(temp[12,2:6])))) / mean(diff(as.vector(as.matrix(temp[12,2:6])))) > 2), "Unpredictable",
+           ifelse(all(abs(temp[12,2:6]) < 0.000001), "Invariant", 
+                  ifelse((temp[12,6] > temp[12,5] & temp[12,5] > temp[12,4] & temp[12,4] > temp[12,3] & temp[12,3] > temp[12,2]) |
+                           (temp[12,6] < temp[12,6] & temp[12,5] < temp[12,4] & temp[12,4] < temp[12,3] & temp[12,3] < temp[12,2]), "Sensitive", 
+                         ifelse((max(temp[12,2:6]) - min(temp[12,2:6])) < 0.000001, "Insensitive", "Unpredictable")))))
   
+  # interpret and classify results for warping invariance
   interpreted.results$"Warping Invariance"[i] <-
-    ifelse(all(is.na(temp[15,2:5])), "NA", 
-           ifelse(all(abs(temp[15,2:5]) < 0.000001), "Invariant", 
-                  ifelse((temp[15,5] > temp[15,4] & temp[15,4] > temp[15,3] & temp[15,3] > temp[15,2]) |
-                           (temp[15,5] < temp[15,4] & temp[15,4] < temp[15,3] & temp[15,3] < temp[15,2]), "Sensitive", 
-                         ifelse((max(temp[15,2:5]) - min(temp[15,2:5])) < 0.000001, "Insensitive", "Unpredictable"))))
+    ifelse(all(is.na(temp[13,2:6])), "NA", 
+           ifelse(max(diff(as.vector(as.matrix(temp[13,2:6])))) / mean(diff(as.vector(as.matrix(temp[13,2:6])))) > 2, "Unpredictable",
+                  ifelse(all(abs(temp[13,2:6]) < 0.000001), "Invariant", 
+                         ifelse((temp[13,6] > temp[13,5] & temp[13,5] > temp[13,4] & temp[13,4] > temp[13,3] & temp[13,3] > temp[13,2]) |
+                                  (temp[13,6] < temp[13,5] & temp[13,5] < temp[13,4] & temp[13,4] < temp[13,3] & temp[13,3] < temp[13,2]), "Sensitive", 
+                                ifelse((max(temp[13,2:6]) - min(temp[13,2:6])) < 0.000001, "Insensitive", "Unpredictable")))))
   
 }
 
+# convert to data frame
 interpreted.results.1 <- do.call(rbind, interpreted.results)
 interpreted.results.2 <- as.data.frame(t(interpreted.results.1))
 
+# convert results to factors
 for (i in 1:ncol(interpreted.results.2)) {
   
   interpreted.results.2[,i] <- factor(interpreted.results.2[,i],
@@ -443,10 +435,13 @@ for (i in 1:ncol(interpreted.results.2)) {
   
 }
 
+# add distance measure names
 interpreted.results.2$"Distance Measure" <- dist.names
 
+# copy to new data frame
 or <- interpreted.results.2
 
+# create type column with distance measure families and make it a factor
 or$Type <- c("Minkowski", "Minkowski", "Minkowski", "Other", "Elastic", "Elastic", "Compression", "Compression", 
              "Elastic", "Elastic", "Feature", "Feature",
              "Feature", "Feature", "Feature", "Model", "Other", "Other", "Squared_L2", "Other", "L1", "Squared_L2",
@@ -455,24 +450,30 @@ or$Type <- c("Minkowski", "Minkowski", "Minkowski", "Other", "Elastic", "Elastic
              "Squared_L2", "Other", "Shannon_Entropy", "Intersection")
 or$Type <- as.factor(or$Type)
 
+# convert to long format
 other_long <- tidyr::gather(or, Test, Value, 1:5, factor_key=TRUE)
 
+# convert type column to factor again
 other_long$Type <- factor(other_long$Type, levels=c("Minkowski", "Intersection", "L1", "Elastic",  "Squared_L2", "Other", 
                                                     "Shannon_Entropy", "Feature", "Fidelity", "Model", "Inner_Product", "Compression"),
                           labels=c("Minkowski Family", "Intersection Family", "L1 Family", "Elastic", "Squared L2 Family", 
                                    "Other Shape-Based","Shannon Entropy Family", "Feature-Based", "Fidelity Family", "Model-Based", 
                                    "Inner Product Family", "Compression-Based"))
 
+# name columns
 names(other_long) <- c("DM", "Type", "Test", "Value")
 
+# shorten names of some distance measures, or add symbols
 other_long$DM[other_long$DM=="KumarJohnson"]<-"Kumar"
 other_long$DM[other_long$DM=="WaveHedges"]<-"Wave"
 other_long$DM[other_long$DM=="EDR"]<-"*EDR"
 
+# convert value column to factor
 other_long$Value <- factor(other_long$Value,
                            levels=c("Neutral", "Positive", "Negative", "All", "None", "Zeros Only", "Sensitive", "Invariant", "Insensitive", "Unpredictable", "NA"), 
                            labels=c("Neutral", "Positive", "Negative", "All", "None", "Zeros", "Sens", "Inv", "Ins", "Unp", "n/a"))
 
+# associate stored images with value categories
 emoji_pic<-data.frame(
   Value = c("Neutral", "Positive", "Negative", 
             "All", "None", "Zeros",
@@ -489,21 +490,28 @@ emoji_pic<-data.frame(
                  "figure_images/black-circle_26ab.png",
                  "figure_images/black-circle_26ab.png"))
 
+# create a function to link them in ggplot
 func_link_to_img <- function(x, size = 16) {
   paste0("<img src='", x, "' width='", size, "'/>")
 }
 
+# load additional library dplyr
 library(dplyr)
+
+# add image links to results data frame
 other_long <- left_join(emoji_pic, other_long, by = c("Value"="Value"))
 
+# convert value column to factor again
 other_long$Value <- factor(other_long$Value,
                            levels=c("Neutral", "Positive", "Negative", "All", "None", "Zeros", "Sens", "Inv", "Ins", "Unp", "n/a"), 
                            labels=c("Neutral", "Positive", "Negative", "All", "None", "Zeros", "Sens", "Inv", "Ins", "Unp", "n/a"))
 
+# load additional libraries for plotting
 library(png)
 library(ggtext)
 library(grid)
-# Get image
+
+# Get images for plot legend
 img_pos <- readPNG("figure_images/u2295-c2.png")
 img_neg <- readPNG("figure_images/u2296-c2.png")
 img_neut <- readPNG("figure_images/u29B6-c.png")
@@ -540,7 +548,7 @@ poall <- ggplot(other_long, aes(x = Test,
   ggtitle(paste("Time-Based Invariances & Other Test Results")) +
   labs(caption = "\n Sens = Sensitive, Ins = Insensitive, Inv = Invariant, Unp = Unpredictable
 \n *For this distance measure, results differ depending on the threshold value, epsilon. 
-  Here, epsilon was set to 0.") +
+  Here, epsilon was set to 0.1.") +
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5),
         axis.title.x = element_blank(),
@@ -568,9 +576,11 @@ poall.grob$heights[23] = unit(5, "null")
 poall.grob$heights[28] = unit(1, "null")
 poall.grob$heights[33] = unit(2, "null")
 
+# adjust colours
 poall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- c("dark blue", "grey30", "grey30", "grey30")
 
-tiff(filename="figures/other.tiff", width=7480, height=10255,
+# save plot as tiff file
+tiff(filename="figures/other_.tiff", width=7480, height=10255,
      units="px", res=1000, pointsize = 10, compression = "lzw")
 
 grid::grid.newpage()

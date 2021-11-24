@@ -247,7 +247,7 @@ get.dm.result.birds1 <- function(dist.fun,
                      y = y,
                      colour = species,
                      shape = species)) +
-      geom_point(size=4) +
+      geom_point(size=6) +
       ylim(ymin.unsm, ymax.unsm) +
       theme(legend.title = element_text(color="blue")) +
       ggtitle("Unsmoothed") +
@@ -278,7 +278,7 @@ get.dm.result.birds1 <- function(dist.fun,
                      y = y,
                      colour = species,
                      shape = species)) +
-      geom_point(size=4) +
+      geom_point(size=6) +
       ylim(ymin.sm, ymax.sm) +
       theme(legend.title = element_text(color="blue")) +
       ggtitle("Smoothed") +
@@ -311,18 +311,18 @@ get.dm.result.birds1 <- function(dist.fun,
   # write results to files ----
   
   # write the grid-arranged plot as a jpg image
-  ggsave(filename = paste(print_name, "_plots_fixed.tiff", sep=""), 
-         path = "/plots/bird_results_temp/2/", 
+  ggsave(filename = paste(print_name, "_plot.tiff", sep=""), 
+         path = "plots/bird_results/", 
          plot = p.all.birds,
-         width = 1903,
-         height = 1262,
+         width = 10000,
+         height = 6000,
          units = "px",
          device = "tiff",
          dpi = 1000)
   
   # write the flextable as a Word document
   save_as_docx(tr_table_birds, 
-               path = paste("/tables/bird_results_temp/", print_name, "_table_fixed.docx", sep=""))
+               path = paste("tables/bird_results/", print_name, "_table.docx", sep=""))
   
   # send the flextable object to the main R environment  
   return(tr_table_birds)

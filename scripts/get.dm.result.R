@@ -100,7 +100,7 @@ get.dm.result1 <- function(dist.fun,
   
   # call out to another function to get non-negativity and triangle inequality results
   
-  temp_nn <- readRDS(file = paste("files/nn_results_temp/", print_name, "_nnfull.RData", sep=""))
+  temp_nn <- readRDS(file = paste("files/nn_results/", print_name, "_nnfull.RData", sep=""))
   
   test.results$"Non-negativity" <- temp_nn[[2]]
   
@@ -108,7 +108,7 @@ get.dm.result1 <- function(dist.fun,
   
   # use results from the function call in Non-negativity testing section
   
-  temp_ti <- readRDS(file = paste("files/ti_results_temp/", print_name, "_tifull.RData", sep=""))
+  temp_ti <- readRDS(file = paste("files/ti_results/", print_name, "_tifull.RData", sep=""))
   
   test.results$"Triangle Inequality" <- temp_ti[[length(temp_ti)-3]]
   
@@ -379,7 +379,7 @@ get.dm.result1 <- function(dist.fun,
   ggsave(filename = paste(print_name, 
                           "_plots.tiff", 
                           sep=""),
-         path = "plots/test_results_temp/",
+         path = "plots/controlled_results/",
          plot = p.all,
          device = "tiff",
          width = 8000,
@@ -390,13 +390,13 @@ get.dm.result1 <- function(dist.fun,
   
   # write the flextable as a Word document
   save_as_docx(tr_table, 
-               path = paste("tables/test_results_temp/", 
+               path = paste("tables/controlled_results/", 
                             print_name, "_table.docx", 
                             sep=""))
   
   # write the wide-form data table to an R file
   saveRDS(tr_wide, 
-          file = paste("files/wide_temp/", 
+          file = paste("files/controlled_results/", 
                        print_name, 
                        "_dfwide.RData", 
                        sep=""))

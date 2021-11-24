@@ -76,7 +76,7 @@ ts_biasednoise <- function(t, q) {
 # outlier sensitivity
 ts_outlier <- function(t, q) {
   
-  set.seed(23) # ensures the same time point will be sampled each time
+  set.seed(24) # ensures the same time point will be sampled each time
   
   if (length(t) <= 3) {
     
