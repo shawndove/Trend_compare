@@ -208,6 +208,7 @@ gg_all <- ggarrange(gg_unsmoothed,
                     common.legend = TRUE)
 
 # open a tiff file to save plot
+if(!dir.exists("figures/")) {dir.create("figures/")}
 tiff("figures/bird_dm_plots_all_chosen.tiff", 
      width = 7480, 
      height = 10000, 

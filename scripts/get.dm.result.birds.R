@@ -11,8 +11,7 @@ get.dm.result.birds1 <- function(dist.fun,
   
   library(ggplot2)
   library(patchwork)
-  library(gridExtra)
-  library(grid)
+  library(ggpubr)
   library(flextable)
   library(plyr)
   
@@ -51,9 +50,9 @@ get.dm.result.birds1 <- function(dist.fun,
                                       unsm.species)
   
   # name the columns
-  colnames(plot.res$"Unsmoothed") <- c("x", "y", "species")
+  colnames(plot.res$"Unsmoothed") <- c("x", "y", "Species")
   
-  plot.res$Unsmoothed$species <- factor(plot.res$Unsmoothed$species, levels = c("Redshank", "Lapwing", "Snipe", "Curlew", "Yellow Wagtail"))
+  plot.res$Unsmoothed$Species <- factor(plot.res$Unsmoothed$Species, levels = c("Redshank", "Lapwing", "Snipe", "Curlew", "Yellow Wagtail"))
   
   # check for NAs in test results
   if (is.na(max(bird.results$"Unsmoothed"))) 
@@ -106,9 +105,9 @@ get.dm.result.birds1 <- function(dist.fun,
                                       sm.species)
   
   # name the columns
-  colnames(plot.res$"Smoothed") <- c("x", "y", "species")
+  colnames(plot.res$"Smoothed") <- c("x", "y", "Species")
   
-  plot.res$Smoothed$species <- factor(plot.res$Smoothed$species,levels = c("Redshank", "Lapwing", "Snipe", "Curlew", "Yellow Wagtail"))
+  plot.res$Smoothed$Species <- factor(plot.res$Smoothed$Species,levels = c("Redshank", "Lapwing", "Snipe", "Curlew", "Yellow Wagtail"))
   
   # check for NAs in test results
   if (is.na(max(bird.results$"Smoothed"))) 
@@ -245,18 +244,24 @@ get.dm.result.birds1 <- function(dist.fun,
     p1.birds <- ggplot(plot.res$"Unsmoothed",
                  aes(x = x, 
                      y = y,
-                     colour = species,
-                     shape = species)) +
+                     colour = Species,
+                     shape = Species)) +
       geom_point(size=6) +
       ylim(ymin.unsm, ymax.unsm) +
-      theme(legend.title = element_text(color="blue")) +
       ggtitle("Unsmoothed") +
       theme_minimal() +
-      theme(plot.title = element_text(hjust = 0.5),
+      theme(plot.title = element_text(hjust = 0.5,
+                                      size = 16),
+            plot.margin = margin(0.5,1,0.5,1, "cm"),
             axis.title.x = element_blank(),
             axis.title.y = element_blank(),
             axis.text.x = element_blank(),
-            axis.text.y = element_text(size=12))
+            axis.text.y = element_text(size = 16),
+            legend.title = element_blank(),
+            legend.text = element_text(size = 16,
+                                       margin = margin(t = 5, 
+                                                       b = 5, 
+                                                       unit = "pt")))
     
   } else 
   {
@@ -276,18 +281,24 @@ get.dm.result.birds1 <- function(dist.fun,
     p2.birds <- ggplot(plot.res$"Smoothed",
                  aes(x = x, 
                      y = y,
-                     colour = species,
-                     shape = species)) +
+                     colour = Species,
+                     shape = Species)) +
       geom_point(size=6) +
       ylim(ymin.sm, ymax.sm) +
-      theme(legend.title = element_text(color="blue")) +
       ggtitle("Smoothed") +
       theme_minimal() +
-      theme(plot.title = element_text(hjust = 0.5),
+      theme(plot.title = element_text(hjust = 0.5,
+                                      size = 16),
+            plot.margin = margin(0.5,1,0.5,1, "cm"),
             axis.title.x = element_blank(),
             axis.title.y = element_blank(),
             axis.text.x = element_blank(),
-            axis.text.y = element_text(size=12))
+            axis.text.y = element_text(size = 16),
+            legend.title = element_blank(),
+            legend.text = element_text(size = 16,
+                                       margin = margin(t = 5, 
+                                                       b = 5, 
+                                                       unit = "pt")))
     
   } else 
   {
@@ -299,16 +310,36 @@ get.dm.result.birds1 <- function(dist.fun,
   }
   
   # arrange the saved plots into one
-  p.all.birds <- grid.arrange(p1.birds,
-                              p2.birds,
-                              ncol=2, 
-                              top = textGrob(paste(print_name, 
-                                                   " Bird Results", 
-                                                   sep=""), 
-                                                   gp=gpar(fontsize=16,
-                                                   font=4)))
+  p.all.birds <- ggarrange(p1.birds,
+                           p2.birds,
+                           ncol = 2,
+                           nrow = 1,
+                           legend = "right",
+                           common.legend = TRUE)+
+    theme(plot.margin = margin(0.5, 0.2, 0.2, 0.2, "cm"))
+  
+  p.all.birds <- annotate_figure(p.all.birds,
+                                 top = text_grob(paste("Wading Bird Rankings: ", 
+                                                      print_name, 
+                                                      sep = ""),
+                                                size = 20,
+                                                hjust = 0.7),
+                                 left = text_grob("Dissimilarity Value",
+                                                  rot = 90,
+                                                  size = 18,
+                                                  vjust = 1.3),
+                                 bottom = text_grob("Species",
+                                                    size = 18,
+                                                    vjust = 0,
+                                                    hjust = 1.5))
   
   # write results to files ----
+
+  # create directories if needed
+  if(!dir.exists("plots/")) {dir.create("plots/")}
+  if(!dir.exists("tables/")) {dir.create("tables/")}
+  if(!dir.exists("plots/bird_results/")) {dir.create("plots/bird_results/")}
+  if(!dir.exists("tables/bird_results/")) {dir.create("tables/bird_results/")}
   
   # write the grid-arranged plot as a jpg image
   ggsave(filename = paste(print_name, "_plot.tiff", sep=""), 
@@ -318,7 +349,8 @@ get.dm.result.birds1 <- function(dist.fun,
          height = 6000,
          units = "px",
          device = "tiff",
-         dpi = 1000)
+         dpi = 1000,
+         compression = "lzw")
   
   # write the flextable as a Word document
   save_as_docx(tr_table_birds, 

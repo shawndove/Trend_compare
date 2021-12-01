@@ -136,9 +136,7 @@ p_all <- p1 + p2 + p3
 
 p1_3 <- p1 + p3
 
-#ggsave(paste("plots/bird_trends_fixed.jpg", sep=""), 
-#       p_all, width=7480, height=9055, units="px", dpi=1000, scale=1, compression="lzw")
-
+if(!dir.exists("figures/")) {dir.create("figures/")}
 ggsave(paste("figures/bird_trends_present.tiff", sep=""), 
        p1_3, width=7480, height=9055, units="px", dpi=1000, scale=1, compression="lzw")
 

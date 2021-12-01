@@ -1,5 +1,4 @@
-# Test distance measures and compile the raw results in a Word document
-# Shawn Dove (s.dove@ucl.ac.uk) - November, 2020
+# Test distance measures and compile the results in a Word document
 
 # Packages ----
 
@@ -60,6 +59,7 @@ for(i in seq_along(dist.fnlist2)) {
 
 # test for triangle inequality and non-negative value handling
 # this function does not generate negative values
+# warnings about negative values being adjusted can be ignored
 for(i in seq_along(dist.fnlist1)) {
 
   ti_nn_table[[i]] <- ti.test.nn.fn1(dist.fun=dist.fnlist1[[i]], 
@@ -79,156 +79,132 @@ for(i in seq_along(dist.fnlist2)) {
 temp_table <- list()
 temp_table_birds <- list()
 
-# create a docx object to write results to
-temp_doc <- read_docx()
-
-
 # loop to call testing function on each distance measure and write
 # plots and tables of all results to the above docx object
-for(i in seq_along(dist.fnlist1)) {
+for(i in seq_along(c(dist.fnlist1, dist.fnlist2))) {
 
   # call testing function and store table of raw results in temp list
   # the testing function also generates plots and tables for each
   # distance measure, which are stored as jpg images and Word documents respectively
-  temp_table[[i]] <- get.dm.result1(dist.fun=dist.fnlist1[[i]], 
-                                   dist.nameslist1[i], 
-                                   dist.argslist1[[i]],
+  temp_table[[i]] <- get.dm.result1(dist.fun=c(dist.fnlist1, dist.fnlist2)[[i]], 
+                                   c(dist.nameslist1, dist.nameslist2)[i], 
+                                   c(dist.argslist1, dist.argslist2)[[i]],
                                    tsx.list,
                                    tsy.list)
   
   # repeat for bird data
-  temp_table_birds[[i]] <- get.dm.result.birds1(dist.fun=dist.fnlist1[[i]], 
-                                               dist.nameslist1[i], 
-                                               dist.argslist1[[i]])
-  
-  # add test results table to Word document
-  #body_add_flextable(temp_doc, 
-  #                   temp_table[[i]])
-  
-  # add a blank space after the test results table
-  #body_add_par(temp_doc, "")
-
-  # variable to store location of image that contains plots of test results
-  #img.file.test <- paste("plots/test_results/", 
-  #                  dist.nameslist1[i], 
-   #                 "_plots.jpg", 
-   #                 sep="")
-  
-  # add plot to Word document
-  #body_add_img(temp_doc, 
-  #             src=img.file.test, 
-  #             height = 5, 
-  #             width = 6)
-  
-  # add a page break after the plot
-  #body_add_break(temp_doc)
-  
-  # add birds results table to Word document
-  #body_add_flextable(temp_doc, 
-  #                   temp_table_birds[[i]])
-  
-  # add a blank space after the birds results table
-  #body_add_par(temp_doc, "")
-  
-  # variable to store location of image that contains plots of birds results
-  #img.file.bird <- paste("plots/bird_results", 
-  #                  dist.nameslist1[i], 
-  #                  "_plots_fixed.jpg", 
-  #                  sep="")
-  
-  # add plot to Word document
-  #body_add_img(temp_doc, 
-  #             src=img.file.bird, 
-  #             height = 5, 
-  #             width = 6)
-  
-  # add a page break after the plot
-  #body_add_break(temp_doc)
+  temp_table_birds[[i]] <- get.dm.result.birds1(dist.fun=c(dist.fnlist1, dist.fnlist2)[[i]], 
+                                               c(dist.nameslist1, dist.nameslist2)[i], 
+                                               c(dist.argslist1, dist.argslist2)[[i]])
   
 }
 
-for(i in seq_along(dist.fnlist2)) {
-  
-  # call testing function and store table of raw results in temp list
-  # the testing function also generates plots and tables for each
-  # distance measure, which are stored as jpg images and Word documents respectively
+# combine lists of distance measures names
+dist.names <- c(dist.nameslist1, dist.nameslist2)
 
-#  temp_table[[i]] <- get.dm.result1(dist.fun=dist.fnlist2[[i]], 
-#                                    dist.nameslist2[i], 
-#                                    dist.argslist2[[i]],
-#                                    tsx.list,
-#                                    tsy.list)
+dist.names <- sort(dist.names)
 
-  # repeat for bird data
-  temp_table_birds[[i]] <- get.dm.result.birds1(dist.fun=dist.fnlist2[[i]], 
-                                               dist.nameslist2[i], 
-                                               dist.argslist2[[i]])
-  
-  # add test results table to Word document
-  #body_add_flextable(temp_doc, 
-  #                   temp_table[[i]])
-  
-  # add a blank space after the test results table
-  #body_add_par(temp_doc, "")
-  
+# create a docx object to write results to
+temp_doc <- read_docx()
+
+# add a blank space after the test results table
+body_add_par(temp_doc, "")
+
+# create list of distance measures that gave results for warping and time scaling
+height8_list <- c("DTW", 
+                  "TAM", 
+                  "ERP", 
+                  "EDR", 
+                  "Piccolo", 
+                  "NCD", 
+                  "CDM")
+
+# loop along combined list of distance measure names
+for (i in seq_along(dist.names)) {
+
   # variable to store location of image that contains plots of test results
-  #img.file.test <- paste("plots/controlled_results/", 
-  #                  dist.nameslist2[i], 
-  #                 "_plots.jpg", 
-  #                 sep="")
+  img.file.test <- paste("plots/controlled_results/", 
+                         dist.names[i], 
+                         "_plots.tiff", 
+                         sep="")
   
-  # add plot to Word document
-  #body_add_img(temp_doc, 
-  #             src=img.file.test, 
-  #             height = 5, 
-  #             width = 6)
+  # add blank space before the plot to center
+  body_add_par(temp_doc, "")
+  body_add_par(temp_doc, "")
+  body_add_par(temp_doc, "")
+  body_add_par(temp_doc, "")
   
-  # add a page break after the plot
-  #body_add_break(temp_doc)
-  
-  # add birds results table to Word document
-  #body_add_flextable(temp_doc, 
-  #                   temp_table_birds[[i]])
-  
-  # add a blank space after the birds results table
-  #body_add_par(temp_doc, "")
-  
-  # variable to store location of image that contains plots of birds results
-  #img.file.bird <- paste("plots/bird_results/", 
-  #                  dist.nameslist2[i], 
-  #                  "_plots_fixed.jpg", 
-  #                  sep="")
-  
-  # add plot to Word document
-  #body_add_img(temp_doc, 
-  #             src=img.file.bird, 
-  #             height = 5, 
-  #             width = 6)
+  if (dist.names[i] %in% height8_list) {
+    
+    # add plot to Word document
+    body_add_img(temp_doc, 
+                 src=img.file.test,
+                 width = 6,
+                 height = 8)
+    
+  } else {
+    
+    # add plot to Word document
+    body_add_img(temp_doc, 
+                 src=img.file.test,
+                 width = 6,
+                 height = 6)
+    
+  }
   
   # add a page break after the plot
-  #body_add_break(temp_doc)
+  body_add_break(temp_doc)
   
 }
+
+for (i in seq_along(dist.names)) {
+  
+  
+  # add blank space before the test results table
+  body_add_par(temp_doc, "")
+  body_add_par(temp_doc, "")
+  body_add_par(temp_doc, "")
+  body_add_par(temp_doc, "")
+  
+  # add test results table to Word document
+  body_add_flextable(temp_doc, 
+                     temp_table[[i]])
+  
+  # add a page break after the table
+  body_add_break(temp_doc)
+}
+
+for (i in seq_along(dist.names)) {
+  
+  # variable to store location of image that contains plots of test results
+  img.file.test <- paste("plots/bird_results/", 
+                         dist.names[i], 
+                         "_plot.tiff", 
+                         sep="")
+  
+  # add blank space before the plot to center
+  body_add_par(temp_doc, "")
+  body_add_par(temp_doc, "")
+  
+  # add plot to Word document
+  body_add_img(temp_doc, 
+               src=img.file.test,
+               width = 6,
+               height = 3.6)
+  
+  # add blank space after the plot
+  body_add_par(temp_doc, "")
+  body_add_par(temp_doc, "")
+  
+  # add a page break after every second plot
+  if ((i %% 2) == 0) {body_add_break(temp_doc)}
+  
+}
+
+# create directory for output if needed
+if(!dir.exists("docs/")) {dir.create("docs/")}
 
 # write docx object to a Word file
-#print(temp_doc,
-#      target="All_results_fixed_4.docx")
-
-tableslist <- create.results.table(c(dist.nameslist1,dist.nameslist2))
-tableslist[[1]] <- theme_zebra(tableslist[[1]])
-tableslist[[2]] <- theme_zebra(tableslist[[2]])
-tableslist[[3]] <- theme_zebra(tableslist[[3]])
-
-temp_doc <- read_docx()
-body_add_flextable(temp_doc, 
-                   tableslist[[1]])
-body_add_break(temp_doc)
-body_add_flextable(temp_doc, 
-                   tableslist[[2]])
-body_add_break(temp_doc)
-body_add_flextable(temp_doc, 
-                   tableslist[[3]])
-body_add_break(temp_doc)
 print(temp_doc,
-      target="tables/Results_tables_1.docx")
+      target="docs/bird_results_plots.docx")
 

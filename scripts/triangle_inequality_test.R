@@ -125,12 +125,15 @@ ti_full_results[[tpops+5]] <- ts_list.3
 
 nn_full_results <- list(nn_temp_results, final_nn_result)
 
-# save working directory path to a variable
-wd <- getwd()
 
-# save full results as RData file
-saveRDS(ti_full_results, file = paste(wd, "/files/ti_results/", print_name, "_tifull.RData", sep=""))
-saveRDS(nn_full_results, file = paste(wd, "/files/nn_results/", print_name, "_nnfull.RData", sep=""))
+# create directories if needed
+if(!dir.exists("files/")) {dir.create("files/")}
+if(!dir.exists("files/ti_results/")) {dir.create("files/ti_results/")}
+if(!dir.exists("files/nn_results/")) {dir.create("files/nn_results/")}
+
+# save full results as RData files
+saveRDS(ti_full_results, file = paste("files/ti_results/", print_name, "_tifull.RData", sep=""))
+saveRDS(nn_full_results, file = paste("files/nn_results/", print_name, "_nnfull.RData", sep=""))
 
 final_results <- list(final_ti_result, final_nn_result)
 

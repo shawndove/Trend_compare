@@ -16,7 +16,7 @@ ti.test.nn.fn1 <- function(dist.fun,
   # and some values in list 1 higher than in list 2)
   ts_list.1 <- as.matrix(pgrowth_nn(tpops, tmax, gr_start=1, gr_mean=0.2, gr_sd=0.5))
   ts_list.2 <- as.matrix(pgrowth_nn(tpops, tmax, gr_start=1, gr_mean=1, gr_sd=1))
-  ts_list.3 <- as.matrix(pgrowth_nn(tpops, tmax, gr_start=1, gr_mean=2, gr_sd=0.3))
+  ts_list.3 <- as.matrix(pgrowth_nn(tpops, tmax, gr_start=1, gr_mean=2, gr_sd=10000))
   
   #ts_list.1 <- vector(length=1000)
   #ts_list.1 <- as.matrix(do.call(rbind, lapply(ts_list.1, function(x) sample(1:1000, 100))))
@@ -129,12 +129,15 @@ ti.test.nn.fn1 <- function(dist.fun,
   
   nn_full_results <- list(nn_temp_results, final_nn_result)
   
-  # save working directory path to a variable
-  wd <- getwd()
+  
+  # create directories if needed
+  if(!dir.exists("files/")) {dir.create("files/")}
+  if(!dir.exists("files/ti_results_nnonly/")) {dir.create("files/ti_results_nnonly/")}
+  if(!dir.exists("files/nn_results_nnonly/")) {dir.create("files/nn_results_nnonly/")}
   
   # save full results as RData file
-  saveRDS(ti_full_results, file = paste(wd, "/files/ti_results_nnonly/", print_name, "_ti_nnonly.RData", sep=""))
-  saveRDS(nn_full_results, file = paste(wd, "/files/nn_results_nnonly/", print_name, "_nn_nnonly.RData", sep=""))
+  saveRDS(ti_full_results, file = paste("files/ti_results_nnonly/", print_name, "_ti_nnonly.RData", sep=""))
+  saveRDS(nn_full_results, file = paste("files/nn_results_nnonly/", print_name, "_nn_nnonly.RData", sep=""))
   
   final_results <- list(final_ti_result, final_nn_result)
   

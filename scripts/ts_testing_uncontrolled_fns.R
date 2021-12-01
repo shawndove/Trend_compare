@@ -308,17 +308,17 @@ test_fn <- function(t, q_min, q_max, increment, dm, ...) {
   
   for (i in param) {
     
-    try(results$translate[counter] <- dm(ts_translate(t, (i/q_max)), t,...))
+    try(results$translate[counter] <- dm(ts_translate(t, i), t,...))
     
     try(results$phase[counter] <- dm(ts_phase(t, i), t,...))
     
     try(results$extend[counter] <- dm(ts_local_extend(t, i), t,...))
     
-    try(results$stretch[counter] <- dm(ts_stretch(t, (1 + (i/q_max))), t,...)/length(t))
+    try(results$stretch[counter] <- dm(ts_stretch(t, (1 + (i/q_max))), t,...))
     
-    try(results$whitenoise[counter] <- dm(t, ts_whitenoise(t, (i/(q_max))),...))
+    try(results$whitenoise[counter] <- dm(t, ts_whitenoise(t, (i/q_max)),...))
     
-    try(results$biasednoise[counter] <- dm(ts_biasednoise(t, (i/(0.5*q_max))), t,...))
+    try(results$biasednoise[counter] <- dm(ts_biasednoise(t, (i/0.5*q_max)), t,...))
     
     try(results$outlier[counter] <- dm(ts_outlier(t, i), t,...))
     

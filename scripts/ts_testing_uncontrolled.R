@@ -27,18 +27,19 @@ test_s2 <- test_s
 test_s <- test_s + 100
 
 # perform uncontrolled testing and save plot of results
-temp_uncon <- uncon_plot_fn(time_series = test_s,
-                            dataset_name = "synthcontrol",
+temp_uncon <- uncon_plot_fn(time_series = test_y,
+                            dataset_name = "yoga",
                             q_min = 1,
-                            q_max = 20,
-                            increment = 1,
-                            package = "ts",
-                            fn_list = dist.fnlist1,
-                            args_list = dist.argslist1,
-                            names_list = dist.nameslist1,
-                            plotname_special = "_test4") # recommend putting an underscore first
+                            q_max = 200,
+                            increment = 10,
+                            package = "ph",
+                            fn_list = dist.fnlist2,
+                            args_list = dist.argslist2,
+                            names_list = dist.nameslist2,
+                            plotname_special = "_test6") # recommend putting an underscore first
 
 # plot time series used for uncontrolled testing
+if(!dir.exists("figures/")) {dir.create("figures/")}
 tiff(filename="figures/yoga_and_synthcontrol_ts_plot.tiff",
      width = 5000, 
      height = 3000, 

@@ -1,6 +1,13 @@
-#metric results ----
+# load libraries ----
+
 library(tidyr)
 library(ggplot2)
+
+# load distance measures ----
+
+source("scripts/select_distance_measures.R")
+
+# metric results ----
 
 # get names for all distance measures
 dist.names <- c(dist.nameslist1, dist.nameslist2)
@@ -60,9 +67,9 @@ mr <- interpreted.results.2
 mr$Type <- c("Minkowski", "Minkowski", "Minkowski", "Other", "Elastic", "Elastic", "Compression", "Compression", "Elastic", "Elastic", 
              "Feature", "Feature",
              "Feature", "Feature", "Feature", "Model", "Other", "Other", "Squared_L2", "Other", "L1", "Squared_L2",
-             "Intersection", "Inner_Product", "Squared_L2", "L1", "Inner_Product", "Shannon_Entropy", "Shannon_Entropy",
-             "Intersection", "Shannon_Entropy", "Other", "Shannon_Entropy", "L1", "Squared_L2", "L1", "Squared_L2", "Fidelity",
-             "Squared_L2", "Other", "Shannon_Entropy", "Intersection")
+             "Intersection", "Inner_Product", "Squared_L2", "L1", "Inner_Product", "Shannon's_Entropy", "Shannon's_Entropy",
+             "Intersection", "Shannon's_Entropy", "Other", "Shannon's_Entropy", "L1", "Squared_L2", "L1", "Squared_L2", "Fidelity",
+             "Squared_L2", "Other", "Shannon's_Entropy", "Intersection")
 
 # convert to factor
 mr$Type <- as.factor(mr$Type)
@@ -73,9 +80,9 @@ metric_long <- metric_long[!is.nan(metric_long$Value),]
 
 # reorder type column
 metric_long$Type <- factor(metric_long$Type, levels=c("Minkowski", "Intersection", "L1", "Elastic",  "Squared_L2", "Other", 
-                                                      "Shannon_Entropy", "Feature", "Fidelity", "Model", "Inner_Product", "Compression"),
+                                                      "Shannon's_Entropy", "Feature", "Fidelity", "Model", "Inner_Product", "Compression"),
                            labels=c("Minkowski Family", "Intersection Family", "L1 Family", "Elastic", "Squared L2 Family", 
-                                    "Other Shape-Based","Shannon Entropy Family", "Feature-Based", "Fidelity Family", "Model-Based", 
+                                    "Other Shape-Based","Shannon's Entropy Family", "Feature-Based", "Fidelity Family", "Model-Based", 
                                     "Inner Product Family", "Compression-Based"))
 
 # add/fix column names
@@ -124,7 +131,7 @@ pmall <- ggplot(metric_long, aes(x = Test,
                                  colour=Value,
                                  label=Value)) +
   geom_point(size=4) +
-  geom_text(data=metric_long[metric_long$Value=="Semi" | metric_long$Value=="Full" | metric_long$Value=="Non",], 
+  geom_text(data=metric_long[metric_long$Value=="Semi" | metric_long$Value=="Full" | metric_long$Value=="Non" | metric_long$Value=="Hemi",], 
             aes(label=Value), color="black", size=4, fontface = "bold") +
   scale_shape_manual(values=c("\U025A3", "\u274E", "\U025A3", "\U025A3", "\u2611")) +
   scale_colour_manual(values=c("white", "dark red", "white", "white", "dark green")) +
@@ -177,6 +184,7 @@ grid::grid.newpage()
 grid::grid.draw(pmall.grob)
 
 # save the adjusted plot
+if(!dir.exists("figures/")) {dir.create("figures/")}
 ggsave(paste("figures/metric_test_results.tiff", sep=""), 
        pmall.grob, width=7480, height=10255, units="px", dpi=1000, scale=1, compression="lzw")
 
@@ -290,9 +298,9 @@ names(rsr) <- c("Test",temp_levels1$Test[c(3:9)],"DM")
 rsr$Type <- c("Minkowski", "Minkowski", "Minkowski", "Other", "Elastic", "Elastic", "Compression", "Compression", 
               "Elastic", "Elastic", "Feature", "Feature",
               "Feature", "Feature", "Feature", "Model", "Other", "Other", "Squared_L2", "Other", "L1", "Squared_L2",
-              "Intersection", "Inner_Product", "Squared_L2", "L1", "Inner_Product", "Shannon_Entropy", "Shannon_Entropy",
-              "Intersection", "Shannon_Entropy", "Other", "Shannon_Entropy", "L1", "Squared_L2", "L1", "Squared_L2", "Fidelity",
-              "Squared_L2", "Other", "Shannon_Entropy", "Intersection")
+              "Intersection", "Inner_Product", "Squared_L2", "L1", "Inner_Product", "Shannon's_Entropy", "Shannon's_Entropy",
+              "Intersection", "Shannon's_Entropy", "Other", "Shannon's_Entropy", "L1", "Squared_L2", "L1", "Squared_L2", "Fidelity",
+              "Squared_L2", "Other", "Shannon's_Entropy", "Intersection")
 rsr$Type <- as.factor(rsr$Type)
 
 test <- rsr[,2:10]
@@ -310,9 +318,9 @@ test_long$Level <- factor(test_long$Level,
                           labels=c("Unpredictable","Invariant", "Very Low", "Low", "Medium", "High", "Very High"))
 
 test_long$Type <- factor(test_long$Type, levels=c("Minkowski", "Intersection", "L1", "Elastic",  "Squared_L2", "Other", 
-                                                  "Shannon_Entropy", "Feature", "Fidelity", "Model", "Inner_Product", "Compression"),
+                                                  "Shannon's_Entropy", "Feature", "Fidelity", "Model", "Inner_Product", "Compression"),
                          labels=c("Minkowski Family", "Intersection Family", "L1 Family", "Elastic", "Squared L2 Family", 
-                                  "Other Shape-Based","Shannon Entropy Family", "Feature-Based", "Fidelity Family", "Model-Based", 
+                                  "Other Shape-Based","Shannon's Entropy Family", "Feature-Based", "Fidelity Family", "Model-Based", 
                                   "Inner Product Family", "Compression-Based"))
 
 test_long$DM[test_long$DM=="KumarJohnson"]<-"Kumar"
@@ -366,6 +374,7 @@ ptall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- c("dark 
 grid::grid.newpage()
 grid::grid.draw(ptall.grob)
 
+if(!dir.exists("figures/")) {dir.create("figures/")}
 ggsave(paste("figures/sens_test_results.tiff", sep=""), 
        ptall.grob, width=7480, height=10255, units="px", dpi=1000, scale=1, compression="lzw")
 
@@ -398,24 +407,24 @@ for (i in seq_along(dist.names)) {
   interpreted.results$"Phase Invariance"[i] <-
     ifelse(all(abs(temp[11,2:6]) < 0.000001), "Invariant", 
            ifelse((max(diff(as.vector(as.matrix(temp[11,2:6])))) / mean(diff(as.vector(as.matrix(temp[11,2:6])))) > 2), "Unpredictable",
-           ifelse((temp[11,6] > temp[11,5] & temp[11,5] > temp[11,4] & temp[11,4] > temp[11,3] & temp[11,3] > temp[11,2]) |
-                    (temp[11,6] < temp[11,5] & temp[11,5] < temp[11,4] & temp[11,4] < temp[11,3] & temp[11,3] < temp[11,2]) , "Sensitive", 
-                  ifelse((max(temp[11,2:6]) - min(temp[11,2:6])) < 0.000001, "Insensitive", "Unpredictable"))))
+                  ifelse((temp[11,6] > temp[11,5] & temp[11,5] > temp[11,4] & temp[11,4] > temp[11,3] & temp[11,3] > temp[11,2]) |
+                           (temp[11,6] < temp[11,5] & temp[11,5] < temp[11,4] & temp[11,4] < temp[11,3] & temp[11,3] < temp[11,2]) , "Sensitive", 
+                         ifelse((max(temp[11,2:6]) - min(temp[11,2:6])) < 0.000001, "Insensitive", "Unpredictable"))))
   
   # interpret and classify results for uniform time scaling invariance
   interpreted.results$"Uniform Time Scaling Invariance"[i] <-
     ifelse(all(is.na(temp[12,2:6])), "NA", 
-           ifelse((max(diff(as.vector(as.matrix(temp[12,2:6])))) / mean(diff(as.vector(as.matrix(temp[12,2:6])))) > 2), "Unpredictable",
            ifelse(all(abs(temp[12,2:6]) < 0.000001), "Invariant", 
-                  ifelse((temp[12,6] > temp[12,5] & temp[12,5] > temp[12,4] & temp[12,4] > temp[12,3] & temp[12,3] > temp[12,2]) |
-                           (temp[12,6] < temp[12,6] & temp[12,5] < temp[12,4] & temp[12,4] < temp[12,3] & temp[12,3] < temp[12,2]), "Sensitive", 
-                         ifelse((max(temp[12,2:6]) - min(temp[12,2:6])) < 0.000001, "Insensitive", "Unpredictable")))))
+                  ifelse((max(diff(as.vector(as.matrix(temp[12,2:6])))) / mean(diff(as.vector(as.matrix(temp[12,2:6])))) > 2), "Unpredictable",
+                         ifelse((temp[12,6] > temp[12,5] & temp[12,5] > temp[12,4] & temp[12,4] > temp[12,3] & temp[12,3] > temp[12,2]) |
+                                  (temp[12,6] < temp[12,6] & temp[12,5] < temp[12,4] & temp[12,4] < temp[12,3] & temp[12,3] < temp[12,2]), "Sensitive", 
+                                ifelse((max(temp[12,2:6]) - min(temp[12,2:6])) < 0.000001, "Insensitive", "Unpredictable")))))
   
   # interpret and classify results for warping invariance
   interpreted.results$"Warping Invariance"[i] <-
     ifelse(all(is.na(temp[13,2:6])), "NA", 
-           ifelse(max(diff(as.vector(as.matrix(temp[13,2:6])))) / mean(diff(as.vector(as.matrix(temp[13,2:6])))) > 2, "Unpredictable",
-                  ifelse(all(abs(temp[13,2:6]) < 0.000001), "Invariant", 
+           ifelse(all(abs(temp[13,2:6]) < 0.000001), "Invariant",
+                  ifelse(max(diff(as.vector(as.matrix(temp[13,2:6])))) / mean(diff(as.vector(as.matrix(temp[13,2:6])))) > 2, "Unpredictable",
                          ifelse((temp[13,6] > temp[13,5] & temp[13,5] > temp[13,4] & temp[13,4] > temp[13,3] & temp[13,3] > temp[13,2]) |
                                   (temp[13,6] < temp[13,5] & temp[13,5] < temp[13,4] & temp[13,4] < temp[13,3] & temp[13,3] < temp[13,2]), "Sensitive", 
                                 ifelse((max(temp[13,2:6]) - min(temp[13,2:6])) < 0.000001, "Insensitive", "Unpredictable")))))
@@ -445,9 +454,9 @@ or <- interpreted.results.2
 or$Type <- c("Minkowski", "Minkowski", "Minkowski", "Other", "Elastic", "Elastic", "Compression", "Compression", 
              "Elastic", "Elastic", "Feature", "Feature",
              "Feature", "Feature", "Feature", "Model", "Other", "Other", "Squared_L2", "Other", "L1", "Squared_L2",
-             "Intersection", "Inner_Product", "Squared_L2", "L1", "Inner_Product", "Shannon_Entropy", "Shannon_Entropy",
-             "Intersection", "Shannon_Entropy", "Other", "Shannon_Entropy", "L1", "Squared_L2", "L1", "Squared_L2", "Fidelity",
-             "Squared_L2", "Other", "Shannon_Entropy", "Intersection")
+             "Intersection", "Inner_Product", "Squared_L2", "L1", "Inner_Product", "Shannon's_Entropy", "Shannon's_Entropy",
+             "Intersection", "Shannon's_Entropy", "Other", "Shannon's_Entropy", "L1", "Squared_L2", "L1", "Squared_L2", "Fidelity",
+             "Squared_L2", "Other", "Shannon's_Entropy", "Intersection")
 or$Type <- as.factor(or$Type)
 
 # convert to long format
@@ -455,9 +464,9 @@ other_long <- tidyr::gather(or, Test, Value, 1:5, factor_key=TRUE)
 
 # convert type column to factor again
 other_long$Type <- factor(other_long$Type, levels=c("Minkowski", "Intersection", "L1", "Elastic",  "Squared_L2", "Other", 
-                                                    "Shannon_Entropy", "Feature", "Fidelity", "Model", "Inner_Product", "Compression"),
+                                                    "Shannon's_Entropy", "Feature", "Fidelity", "Model", "Inner_Product", "Compression"),
                           labels=c("Minkowski Family", "Intersection Family", "L1 Family", "Elastic", "Squared L2 Family", 
-                                   "Other Shape-Based","Shannon Entropy Family", "Feature-Based", "Fidelity Family", "Model-Based", 
+                                   "Other Shape-Based","Shannon's Entropy Family", "Feature-Based", "Fidelity Family", "Model-Based", 
                                    "Inner Product Family", "Compression-Based"))
 
 # name columns
@@ -474,7 +483,7 @@ other_long$Value <- factor(other_long$Value,
                            labels=c("Neutral", "Positive", "Negative", "All", "None", "Zeros", "Sens", "Inv", "Ins", "Unp", "n/a"))
 
 # associate stored images with value categories
-emoji_pic<-data.frame(
+emoji_pic <- data.frame(
   Value = c("Neutral", "Positive", "Negative", 
             "All", "None", "Zeros",
             "Sens", "Inv", "Ins", "Unp", "n/a"),
@@ -500,6 +509,8 @@ library(dplyr)
 
 # add image links to results data frame
 other_long <- left_join(emoji_pic, other_long, by = c("Value"="Value"))
+
+other_long <- other_long[complete.cases(other_long),]
 
 # convert value column to factor again
 other_long$Value <- factor(other_long$Value,
@@ -555,7 +566,7 @@ poall <- ggplot(other_long, aes(x = Test,
         axis.title.y = element_blank(),
         axis.text.x = element_text(size=14, angle=90, vjust=0.5, hjust=1),
         axis.text.y = element_text(size=14),
-        legend.position = c(1.1, -0.25),
+        legend.position = c(1.08, -0.25),
         strip.text.x = element_text(size=12),
         plot.caption.position = "plot",
         plot.caption = element_text(size=10, hjust=0),
@@ -580,6 +591,7 @@ poall.grob$heights[33] = unit(2, "null")
 poall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- c("dark blue", "grey30", "grey30", "grey30")
 
 # save plot as tiff file
+if(!dir.exists("figures/")) {dir.create("figures/")}
 tiff(filename="figures/other_.tiff", width=7480, height=10255,
      units="px", res=1000, pointsize = 10, compression = "lzw")
 
@@ -597,17 +609,17 @@ match = match[!grepl("bg", match)]  # removes matches containing bg
 match
 
 # Change the legend keys to the images
-downViewport(match[10])
+downViewport(match[9])
 grid.rect(gp=gpar(col = NA, fill = "white"))
 grid.raster(img_neg, interpolate=FALSE)
 upViewport(0)
 
-downViewport(match[6])
+downViewport(match[5])
 grid.rect(gp=gpar(col = NA, fill = "white"))
 grid.raster(img_pos, interpolate=FALSE)
 upViewport(0)
 
-downViewport(match[7])
+downViewport(match[6])
 grid.rect(gp=gpar(col = NA, fill = "white"))
 grid.raster(img_neut, interpolate=FALSE)
 upViewport(0)

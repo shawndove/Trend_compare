@@ -226,6 +226,7 @@ uncon_plot_fn <- function(time_series,
   
   # write the grid-arranged plot as a tiff image
 
+  if(!dir.exists("figures/")) {dir.create("figures/")}
   ggsave(filename=paste(dataset_name, 
                         "_", 
                         q_min, 

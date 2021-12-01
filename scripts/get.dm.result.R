@@ -13,8 +13,7 @@ get.dm.result1 <- function(dist.fun,
   
   library(ggplot2)
   library(patchwork)
-  library(gridExtra)
-  library(grid)
+  library(ggpubr)
   library(flextable)
   library(plyr)
   
@@ -96,22 +95,30 @@ get.dm.result1 <- function(dist.fun,
   
   }
   
-  # testing: Non-negativity ----
+  # testing: Non-negativity and Triangle Inequality ----
   
-  # call out to another function to get non-negativity and triangle inequality results
-  
-  temp_nn <- readRDS(file = paste("files/nn_results/", print_name, "_nnfull.RData", sep=""))
-  
-  test.results$"Non-negativity" <- temp_nn[[2]]
-  
-  # testing: Triangle inequality ----
-  
-  # use results from the function call in Non-negativity testing section
-  
-  temp_ti <- readRDS(file = paste("files/ti_results/", print_name, "_tifull.RData", sep=""))
-  
-  test.results$"Triangle Inequality" <- temp_ti[[length(temp_ti)-3]]
-  
+  # check if results already exist
+  if (file.exists(paste("files/nn_results/", print_name, "_nnfull.RData", sep="")) &
+      file.exists(paste("files/ti_results/", print_name, "_tifull.RData", sep=""))) {
+    
+    # if so, get existing results
+    temp_nn <- readRDS(file = paste("files/nn_results/", print_name, "_nnfull.RData", sep=""))
+    temp_ti <- readRDS(file = paste("files/ti_results/", print_name, "_tifull.RData", sep=""))
+    
+    test.results$"Non-negativity" <- temp_nn[[2]]
+    test.results$"Triangle Inequality" <- temp_ti[[length(temp_ti)-3]]
+    
+  } else {
+
+    # if not, call out to another function to get results
+    temp_ti_nn <- ti.test.fn1(dist.fun, 
+                              print_name, 
+                              dist.args)
+    
+    test.results$"Non-negativity" <- temp_ti_nn[[2]]
+    test.results$"Triangle Inequality" <- temp_ti_nn[[1]]
+    
+  }
   
   # testing: Relative Sensitivity Ranges ----
   
@@ -310,8 +317,8 @@ get.dm.result1 <- function(dist.fun,
   # add a title for the table, including abbreviated name of distance measure
   tr_table <- add_header_row(tr_table, 
                              top=TRUE, 
-                             values=paste(print_name, 
-                                          "Raw Test Results", 
+                             values=paste("Controlled Test Results:", 
+                                          print_name, 
                                           separator=""),
                              colwidths=ncol(tr_wide))
   
@@ -330,16 +337,16 @@ get.dm.result1 <- function(dist.fun,
       p[[i]] <- ggplot(plot.res[[i]],
                    aes(x = x, 
                        y = y)) +
-        geom_point(size=2) +
+        geom_point(size = 1.5) +
         ylim(ymin[[i]], ymax[[i]]) +
-        theme(legend.title = element_text(color="blue")) +
         ggtitle(names(plot.res[i])) +
         theme_minimal() +
-        theme(plot.title = element_text(hjust = 0.5),
+        theme(plot.title = element_text(hjust = 0.5,
+                                        size = 10),
               axis.title.x = element_blank(),
               axis.title.y = element_blank(),
               axis.text.x = element_blank(),
-              axis.text.y = element_text(size=12))
+              axis.text.y = element_text(size = 10))
       
     } else 
     {
@@ -351,42 +358,102 @@ get.dm.result1 <- function(dist.fun,
     }
     
   }
-  
-  # choose plots to arrange together into single plot
-  p_plot <- list(p[[3]], 
-                 p[[4]], 
-                 p[[5]], 
-                 p[[6]], 
-                 p[[7]], 
-                 p[[8]], 
-                 p[[9]], 
-                 p[[10]],
-                 p[[11]],
-                 p[[12]],
-                 p[[13]])
- 
-  # arrange chosen plots into one
-  p.all <- grid.arrange(do.call(arrangeGrob, c(p_plot, ncol=3)),
-                                 top = textGrob(paste(print_name, 
-                                                      " Test Results", 
-                                                      sep=""),
-                                       gp=gpar(fontsize=16,
-                                               font=4)))
 
+  if (("x" %in% names(p[[12]]$data)) & ("x" %in% names(p[[13]]$data))) {
+    
+  # arrange chosen plots into one
+  p.all <- ggarrange(p[[3]], 
+                     p[[4]], 
+                     p[[5]], 
+                     p[[6]], 
+                     p[[7]], 
+                     p[[8]], 
+                     p[[9]], 
+                     p[[10]],
+                     p[[11]],
+                     p[[12]],
+                     p[[13]], 
+                     ncol=3,
+                     nrow=4)+
+    theme(plot.margin = margin(0.5,0.2,0.2,0.2, "cm"))
+  
+  } else {
+    
+    p.all <- ggarrange(p[[3]], 
+                       p[[4]], 
+                       p[[5]], 
+                       p[[6]], 
+                       p[[7]], 
+                       p[[8]], 
+                       p[[9]], 
+                       p[[10]],
+                       p[[11]],
+                       ncol=3,
+                       nrow=3)+
+      theme(plot.margin = margin(0.5,0.2,0.2,0.2, "cm"))
+    
+  }
+    
+    # add title
+    p.all <- annotate_figure(p.all, 
+                             top = text_grob(paste("Controlled Test Results: ", 
+                                                   print_name,
+                                                   sep=""),
+                                             size = 14,
+                                             vjust = 1),
+                             bottom = text_grob("Magnitude of Transformation",
+                                                size = 12,
+                                                vjust = 0),
+                             left = text_grob("Dissimilarity Value",
+                                              size = 12,
+                                              rot = 90,
+                                              hjust = 0.5,
+                                              vjust = 1))
+    
+    
+  
   # write results to files ----
 
-  # write the grid-arranged plot as a jpg image
+  # create directories if needed
+  if(!dir.exists("plots/")) {dir.create("plots/")}
+  if(!dir.exists("tables/")) {dir.create("tables/")}
+  if(!dir.exists("files/")) {dir.create("files/")}
+  if(!dir.exists("plots/controlled_results/")) {dir.create("plots/controlled_results/")}
+  if(!dir.exists("tables/controlled_results/")) {dir.create("tables/controlled_results/")}
+  if(!dir.exists("files/controlled_results/")) {dir.create("files/controlled_results/")}
+  
+    
+  if (("x" %in% names(p[[12]]$data)) & ("x" %in% names(p[[13]]$data))) {
+      
+  # write the grid-arranged plot as a tiff image
   ggsave(filename = paste(print_name, 
                           "_plots.tiff", 
                           sep=""),
          path = "plots/controlled_results/",
          plot = p.all,
          device = "tiff",
-         width = 8000,
+         width = 6000,
          height = 8000,
          units = "px",
          dpi = 1000,
          compression = "lzw")
+    
+  } else {
+    
+    # write the grid-arranged plot as a tiff image
+    ggsave(filename = paste(print_name, 
+                            "_plots.tiff", 
+                            sep=""),
+           path = "plots/controlled_results/",
+           plot = p.all,
+           device = "tiff",
+           width = 6000,
+           height = 6000,
+           units = "px",
+           dpi = 1000,
+           compression = "lzw")
+    
+  }
   
   # write the flextable as a Word document
   save_as_docx(tr_table, 
