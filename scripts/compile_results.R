@@ -102,6 +102,7 @@ for(i in seq_along(c(dist.fnlist1, dist.fnlist2))) {
 # combine lists of distance measures names
 dist.names <- c(dist.nameslist1, dist.nameslist2)
 
+# sort alphabetically
 dist.names <- sort(dist.names)
 
 # create a docx object to write results to
@@ -119,7 +120,7 @@ height8_list <- c("DTW",
                   "NCD", 
                   "CDM")
 
-# loop along combined list of distance measure names
+# add controlled results plots to document
 for (i in seq_along(dist.names)) {
 
   # variable to store location of image that contains plots of test results
@@ -157,8 +158,13 @@ for (i in seq_along(dist.names)) {
   
 }
 
-for (i in seq_along(dist.names)) {
-  
+# create number sequence that will arrange tables in alphabetical order
+temp_seq <- c(12, 19, 16, 20, 21, 8, 4, 22, 18, 23, 24, 25, 5, 10, 9, 1, 11, 
+              26, 3, 15, 27, 28, 29, 30, 31, 32, 33, 34, 2, 7, 13, 14, 35, 36, 
+              37, 38, 39, 17, 6, 40, 41, 42)
+
+# add controlled results tables to document
+for (i in temp_seq) {
   
   # add blank space before the test results table
   body_add_par(temp_doc, "")
@@ -174,6 +180,7 @@ for (i in seq_along(dist.names)) {
   body_add_break(temp_doc)
 }
 
+# add bird results plots to document
 for (i in seq_along(dist.names)) {
   
   # variable to store location of image that contains plots of test results
@@ -206,5 +213,5 @@ if(!dir.exists("docs/")) {dir.create("docs/")}
 
 # write docx object to a Word file
 print(temp_doc,
-      target="docs/bird_results_plots.docx")
+      target="docs/controlled_and_bird_results.docx")
 
