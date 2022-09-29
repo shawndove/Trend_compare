@@ -86,6 +86,11 @@ text(x = 1.2,
      labels = ("(a)"), 
      cex = 2)
 
+text(x = 8.5, 
+     y = 2.8, 
+     labels = ("translation"), 
+     cex = 2)
+
 # amplitude plot
 plot(1:10, 
      test.amp.a, 
@@ -108,6 +113,11 @@ axis(side = 1,
 text(x = 1.2, 
      y = 2.8, 
      labels = ("(b)"), 
+     cex = 2)
+
+text(x = 8.6, 
+     y = 2.8, 
+     labels = ("amplitude"), 
      cex = 2)
 
 # white noise plot
@@ -134,6 +144,11 @@ text(x = 1.2,
      labels = ("(c)"), 
      cex = 2)
 
+text(x = 8.4, 
+     y = 2.8, 
+     labels = ("white noise"), 
+     cex = 2)
+
 # biased noise plot
 plot(1:10, 
      test.bn.a/2, 
@@ -156,6 +171,11 @@ axis(side = 1,
 text(x = 1.2, 
      y = 2.8, 
      labels = ("(d)"), 
+     cex = 2)
+
+text(x = 8.2, 
+     y = 2.8, 
+     labels = ("biased noise"), 
      cex = 2)
 
 # outlier plot
@@ -182,6 +202,11 @@ text(x = 1.2,
      labels = ("(e)"), 
      cex = 2)
 
+text(x = 9, 
+     y = 2.8, 
+     labels = ("outliers"), 
+     cex = 2)
+
 # phase shift plot
 plot(1:10, 
      test.phase.a/1.33, 
@@ -204,6 +229,11 @@ axis(side = 1,
 text(x = 1.2, 
      y = 2.8, 
      labels = ("(f)"), 
+     cex = 2)
+
+text(x = 9.1, 
+     y = 2.8, 
+     labels = ("phase"), 
      cex = 2)
 
 # time scaling plot
@@ -231,6 +261,11 @@ text(x = 1.2,
      labels = ("(g)"), 
      cex = 2)
 
+text(x = 8.3, 
+     y = 2.8, 
+     labels = ("time scaling"), 
+     cex = 2)
+
 # warping plot
 plot(1:11, 
      test.warp.b+0.05, 
@@ -254,6 +289,11 @@ axis(side = 1,
 text(x = 1.2, 
      y = 2.8, 
      labels = ("(h)"), 
+     cex = 2)
+
+text(x = 8.9, 
+     y = 2.8, 
+     labels = ("warping"), 
      cex = 2)
 
 # duration plot
@@ -280,6 +320,11 @@ text(x = 1.2,
      labels = ("(i)"), 
      cex = 2)
 
+text(x = 8.9, 
+     y = 2.8, 
+     labels = ("duration"), 
+     cex = 2)
+
 # frequency plot
 plot(1:10, 
      test.freq.a, 
@@ -302,6 +347,11 @@ axis(side = 1,
 text(x = 1.2, 
      y = 2.8, 
      labels = ("(j)"), 
+     cex = 2)
+
+text(x = 8.6, 
+     y = 2.8, 
+     labels = ("frequency"), 
      cex = 2)
 
 # add axis labels

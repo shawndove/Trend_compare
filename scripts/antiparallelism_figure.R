@@ -63,18 +63,23 @@ text(x = 2,
 
 text(x = 2.1, 
      y = 3, 
-     labels = ("x"), 
+     labels = ("X"), 
      cex = 1.2)
 
 text(x = 2.1, 
      y = 1, 
-     labels = ("y"), 
+     labels = ("Y"), 
      cex = 1.2)
 
 text(x = 2.1, 
      y = 5, 
-     labels = ("z"), 
+     labels = ("Z"), 
      cex = 1.2)
+
+text(x = 1.15,
+     y = 5.8,
+     labels = "antiparallelism bias",
+     cex = 1)
 
 # add x-axis label
 mtext(text = "Time", 

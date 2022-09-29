@@ -167,17 +167,31 @@ pmall.grob$heights[33] = unit(2, "null")
 
 # adjust the colours of the distance measure names
 pmall.grob$grobs[[44]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- "grey30"
-pmall.grob$grobs[[45]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- c("dark blue", "dark blue", "grey30", "grey30")
-pmall.grob$grobs[[46]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- c("dark blue", "dark blue", "dark blue", "dark blue", "grey30", "grey30")
+pmall.grob$grobs[[45]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- 
+  c("dark blue", "dark blue", "grey30", "grey30")
+pmall.grob$grobs[[46]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- 
+  c("dark blue", "dark blue", "dark blue", "dark blue", "grey30", "grey30")
 pmall.grob$grobs[[47]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- "grey30"
 pmall.grob$grobs[[48]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- "grey30"
 pmall.grob$grobs[[49]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- "grey30"
-pmall.grob$grobs[[38]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- c("dark blue", "dark blue", "dark blue")
-pmall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- c("dark red", "grey30", "grey30", "grey30")
+pmall.grob$grobs[[38]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- 
+  c("dark blue", "dark blue", "dark blue")
+pmall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- 
+  c("dark red", "grey30", "grey30", "grey30")
 pmall.grob$grobs[[40]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- "grey30"
 pmall.grob$grobs[[41]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- "grey30"
 pmall.grob$grobs[[42]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- "grey30"
 pmall.grob$grobs[[43]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- "grey30"
+
+# bold the coloured names
+pmall.grob$grobs[[45]]$children[[2]]$grobs[[1]]$children[[1]]$gp$font <- 
+  as.integer(c(2, 2, 1, 1))
+pmall.grob$grobs[[46]]$children[[2]]$grobs[[1]]$children[[1]]$gp$font <- 
+  as.integer(c(2, 2, 2, 2, 1, 1))
+pmall.grob$grobs[[38]]$children[[2]]$grobs[[1]]$children[[1]]$gp$font <- 
+  as.integer(c(2, 2, 2))
+pmall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$font <- 
+  as.integer(c(2, 1, 1, 1))
 
 # draw the adjusted plot
 grid::grid.newpage()
@@ -187,7 +201,10 @@ grid::grid.draw(pmall.grob)
 if(!dir.exists("figures/")) {dir.create("figures/")}
 ggsave(paste("figures/metric_test_results.tiff", sep=""), 
        pmall.grob, width=7480, height=10255, units="px", dpi=1000, scale=1, compression="lzw")
-
+#ggsave(paste("figures/metric_test_results.tiff", sep=""), 
+ #       pmall.grob, width=3740, height=5128, units="px", dpi=1000, scale=2, compression="lzw")
+       
+       
 
 # sensitivity results ----
 
@@ -220,9 +237,9 @@ levels_fn <- function(levels_df) {
   
   levels_df <- levels_df[levels_df[,2] >= 0,]
   
-  levels_df <- levels_df[!is.na(levels_1[,2]),]
+  levels_df <- levels_df[!is.na(levels_df[,2]),]
   
-  levels_df <- levels_df[!is.nan(levels_1[,2]),]
+  levels_df <- levels_df[!is.nan(levels_df[,2]),]
   
   levels_df$Levels <- cut(levels_df[,2], 
                           breaks=c(0,0.2,0.7,1.3,2.5,20), 
@@ -313,9 +330,9 @@ test_long$Level <- c(interpreted.results.2[,1], interpreted.results.2[,2], inter
                      interpreted.results.2[,4], interpreted.results.2[,5], interpreted.results.2[,6],
                      interpreted.results.2[,7])
 
-test_long$Level <- factor(test_long$Level, 
-                          levels=c(1,2,3,4,5,6, 7), 
-                          labels=c("Unpredictable","Invariant", "Very Low", "Low", "Medium", "High", "Very High"))
+#test_long$Level <- factor(test_long$Level, 
+#                          levels=c(1,2,3,4,5,6,7), 
+#                          labels=c("Unpredictable","Invariant", "Very Low", "Low", "Medium", "High", "Very High"))
 
 test_long$Type <- factor(test_long$Type, levels=c("Minkowski", "Intersection", "L1", "Elastic",  "Squared_L2", "Other", 
                                                   "Shannon's_Entropy", "Feature", "Fidelity", "Model", "Inner_Product", "Compression"),
@@ -369,7 +386,10 @@ ptall.grob$heights[23] = unit(5, "null")
 ptall.grob$heights[28] = unit(1, "null")
 ptall.grob$heights[33] = unit(2, "null")
 
-ptall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- c("dark blue", "grey30", "grey30", "grey30")
+ptall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- 
+  c("dark blue", "grey30", "grey30", "grey30")
+ptall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$font <-
+  as.integer(c(2, 1, 1, 1))
 
 grid::grid.newpage()
 grid::grid.draw(ptall.grob)
@@ -588,7 +608,12 @@ poall.grob$heights[28] = unit(1, "null")
 poall.grob$heights[33] = unit(2, "null")
 
 # adjust colours
-poall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- c("dark blue", "grey30", "grey30", "grey30")
+poall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$col <- 
+  c("dark blue", "grey30", "grey30", "grey30")
+# add bold
+poall.grob$grobs[[39]]$children[[2]]$grobs[[1]]$children[[1]]$gp$font <-
+  as.integer(c(2, 1, 1, 1))
+
 
 # save plot as tiff file
 if(!dir.exists("figures/")) {dir.create("figures/")}
