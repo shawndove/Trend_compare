@@ -32,13 +32,13 @@ test.tsc.b <- c(1, 1.5, 2, 1.5, 1, 1, 1, 2, 3, 2, 1)
 test.warp.a <- c(1, 1, 2, 1, 1, 3, 1, 1)
 test.warp.b <- c(1, 1, 2, 1, 1, 2, 3, 2, 1, 1, 1)
 
-# duration
-test.dur.a <- c(1, 1, 3, 3, 1, 1, 1, 1, 1, 1)
-test.dur.b <- c(1, 1, 3, 3, 3, 1, 1, 1, 1, 1)
-
 # frequency
 test.freq.a <- c(1, 3, 1, 1, 1, 1, 1, 1, 1, 1)
 test.freq.b <- c(1, 3, 1, 1, 3, 1, 1, 1, 1, 1)
+
+# duration
+test.dur.a <- c(1, 1, 3, 3, 1, 1, 1, 1, 1, 1)
+test.dur.b <- c(1, 1, 3, 3, 3, 1, 1, 1, 1, 1)
 
 ## plot figure ----
 
@@ -46,7 +46,7 @@ test.freq.b <- c(1, 3, 1, 1, 3, 1, 1, 1, 1, 1)
 if(!dir.exists("figures/")) {dir.create("figures/")}
 
 # create tiff file
-tiff(file = "figures/properties.tiff", 
+tiff(file = "figures/properties2_fixed.tiff", 
      compression = "lzw", 
      res = 1000,
      width = 7480, 
@@ -296,35 +296,6 @@ text(x = 8.9,
      labels = ("warping"), 
      cex = 2)
 
-# duration plot
-plot(1:10, 
-     test.dur.a, 
-     type = "l", 
-     lty = 1, 
-     xlab = "", 
-     ylab = "", 
-     xaxt = "n", 
-     yaxt = "n", 
-     ylim = c(1, 3.05))
-
-lines(test.dur.b+0.05, 
-      type = "l", 
-      lty = 2)
-
-axis(side = 1, 
-     labels = FALSE, 
-     at = c(0,1,2,3,4,5,6,7,8,9,10))
-
-text(x = 1.2, 
-     y = 2.8, 
-     labels = ("(i)"), 
-     cex = 2)
-
-text(x = 8.9, 
-     y = 2.8, 
-     labels = ("duration"), 
-     cex = 2)
-
 # frequency plot
 plot(1:10, 
      test.freq.a, 
@@ -346,12 +317,41 @@ axis(side = 1,
 
 text(x = 1.2, 
      y = 2.8, 
-     labels = ("(j)"), 
+     labels = ("(i)"), 
      cex = 2)
 
 text(x = 8.6, 
      y = 2.8, 
      labels = ("frequency"), 
+     cex = 2)
+
+# duration plot
+plot(1:10, 
+     test.dur.a, 
+     type = "l", 
+     lty = 1, 
+     xlab = "", 
+     ylab = "", 
+     xaxt = "n", 
+     yaxt = "n", 
+     ylim = c(1, 3.05))
+
+lines(test.dur.b+0.05, 
+      type = "l", 
+      lty = 2)
+
+axis(side = 1, 
+     labels = FALSE, 
+     at = c(0,1,2,3,4,5,6,7,8,9,10))
+
+text(x = 1.2, 
+     y = 2.8, 
+     labels = ("(j)"), 
+     cex = 2)
+
+text(x = 8.9, 
+     y = 2.8, 
+     labels = ("duration"), 
      cex = 2)
 
 # add axis labels
